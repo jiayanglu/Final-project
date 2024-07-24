@@ -519,34 +519,33 @@ dbl (22): Diabetes_binary, HighBP, HighChol, CholCheck, BMI, Smoker, Stroke,...
 <h3 class="anchored" data-anchor-id="models-comparison">Models comparison</h3>
 <p>Obtain log-loss value for each model:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">#using logLoss  as our metric for logistic M1 model:</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co">#get predicted values corresponding to the probabilities that each observation in test data belongs to "Prediabetes or diabetes"</span></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>predicted_prob_M1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M1_fit,</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="co">#convert variable Diabetes_binary from factor to numeric in order to use logLoss function</span></span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M1 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_transformed<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes or diabetes"</span>),</span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>                                predicted_prob_M1<span class="sc">$</span><span class="st">`</span><span class="at">Prediabetes or diabetes</span><span class="st">`</span>)</span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="co">#using logLoss  as our metric for logistic M2 model:</span></span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>predicted_prob_M2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M2_fit,</span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
-<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M2 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_transformed<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes or diabetes"</span>),</span>
-<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>                                predicted_prob_M2<span class="sc">$</span><span class="st">`</span><span class="at">Prediabetes or diabetes</span><span class="st">`</span>)</span>
-<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a><span class="co">#using logLoss  as our metric for logistic M3 model:</span></span>
-<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>predicted_prob_M3 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M3_fit,</span>
-<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
-<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M3 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_transformed<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes or diabetes"</span>),</span>
-<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>                                predicted_prob_M3<span class="sc">$</span><span class="st">`</span><span class="at">Prediabetes or diabetes</span><span class="st">`</span>)</span>
-<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a><span class="co">#list of accuracy obtained from each logistic model</span></span>
-<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">log_loss_logistic_M1 =</span> log_loss_logistic_M1, <span class="at">log_loss_logistic_M2 =</span> log_loss_logistic_M2, <span class="at">log_loss_logistic_M3 =</span> log_loss_logistic_M3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">#using logLoss as our metric for logistic M1 model:</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co">#get predicted values corresponding to the probabilities that each observation in test data belongs to "Prediabetes or diabetes"</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>predicted_prob_M1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M1_fit,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="co">#convert variable Diabetes_binary from factor to numeric in order to use logLoss function</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M1 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_transformed<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes or diabetes"</span>),</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>                                predicted_prob_M1<span class="sc">$</span><span class="st">`</span><span class="at">Prediabetes or diabetes</span><span class="st">`</span>)</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="co">#using logLoss  as our metric for logistic M2 model:</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>predicted_prob_M2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M2_fit,</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M2 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_transformed<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes or diabetes"</span>),</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>                                predicted_prob_M2<span class="sc">$</span><span class="st">`</span><span class="at">Prediabetes or diabetes</span><span class="st">`</span>)</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a><span class="co">#using logLoss as our metric for logistic M3 model:</span></span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>predicted_prob_M3 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M3_fit,</span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M3 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_transformed<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes or diabetes"</span>),</span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>                                predicted_prob_M3<span class="sc">$</span><span class="st">`</span><span class="at">Prediabetes or diabetes</span><span class="st">`</span>)</span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a><span class="co">#list of log-loss values obtained from each logistic model</span></span>
+<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">log_loss_logistic_M1 =</span> log_loss_logistic_M1, <span class="at">log_loss_logistic_M2 =</span> log_loss_logistic_M2, <span class="at">log_loss_logistic_M3 =</span> log_loss_logistic_M3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$log_loss_logistic_M1
 [1] 0.3466268
@@ -558,7 +557,7 @@ $log_loss_logistic_M3
 [1] 0.3497698</code></pre>
 </div>
 </div>
-<p>From the result after using logLoss(), we can see that all 3 logistic models have similar log-loss values (between 0.34 to 0.35). Therefore, considering the complexity of models, model 3 could be chosen as the best model among these three models since it is the simplest model among them.</p>
+<p>From the result after using logLoss(), we can see that all 3 logistic models have similar log-loss values (between 0.34 to 0.35). Therefore, considering the complexity of models, logistic_M3_fit could be chosen as the best model among these three models since it is the simplest model among them.</p>
 </section>
 </section>
 <section id="classification-tree" class="level2">
@@ -782,6 +781,40 @@ The final values used for the model were mtry = 4, splitrule = extratrees
 </section>
 <section id="final-model-selection" class="level2">
 <h2 class="anchored" data-anchor-id="final-model-selection">Final Model Selection</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co">#using logLoss as our metric for classification model:</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="co">#get predicted values corresponding to the probabilities that each observation in test data belongs to "Prediabetes or diabetes"</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>predicted_prob_classification <span class="ot">&lt;-</span> <span class="fu">predict</span>(classification_fit,</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed_2, <span class="sc">-</span>Diabetes_binary),</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">type=</span><span class="st">'prob'</span>)</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="co">#convert variable Diabetes_binary from factor to numeric in order to use logLoss function</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>log_loss_classification <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_transformed_2<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes_or_diabetes"</span>),</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>                                   predicted_prob_classification<span class="sc">$</span>Prediabetes_or_diabetes)</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="co">#using logLoss as our metric for classification model:</span></span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>predicted_prob_rf <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_fit,</span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed_2, <span class="sc">-</span>Diabetes_binary),</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>                             <span class="at">type=</span><span class="st">'prob'</span>)</span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a><span class="co">#convert variable Diabetes_binary from factor to numeric in order to use logLoss function</span></span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>log_loss_rf <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_transformed_2<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes_or_diabetes"</span>),</span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>                                   predicted_prob_rf<span class="sc">$</span>Prediabetes_or_diabetes)</span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a><span class="co">#list of log-loss values obtained from each model</span></span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">log_loss_logistic_M3 =</span> log_loss_logistic_M3,</span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>     <span class="at">log_loss_classification =</span> log_loss_classification,</span>
+<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a>     <span class="at">log_loss_rf =</span> log_loss_rf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$log_loss_logistic_M3
+[1] 0.3497698
+
+$log_loss_classification
+[1] 0.3827385
+
+$log_loss_rf
+[1] 0.3471412</code></pre>
+</div>
+</div>
+<p>From the result, we can see that the random forest tree model has the lowest log-loss value (80.72%) among all the models, which means that the random forest tree model’s predicted probabilities are cloest to the actual observed outcomes among all models. Therefore, the random forest tree model overall did the best job (in terms of log-loss metric) on the test set.</p>
 
 
 </section>

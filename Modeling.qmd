@@ -346,16 +346,16 @@ predicted_prob_classification <- predict(classification_fit,
                                          newdata = select(test_transformed_2, -Diabetes_binary),
                                          type='prob')
 #convert variable Diabetes_binary from factor to numeric in order to use logLoss function
-log_loss_classification <- logLoss(as.numeric(as.character(test_transformed_2$Diabetes_binary) == "Prediabetes or diabetes"),
-                                   predicted_prob_classification$`Prediabetes or diabetes`)
+log_loss_classification <- logLoss(as.numeric(as.character(test_transformed_2$Diabetes_binary) == "Prediabetes_or_diabetes"),
+                                   predicted_prob_classification$Prediabetes_or_diabetes)
 
 #using logLoss as our metric for classification model:
 predicted_prob_rf <- predict(rf_fit,
                              newdata = select(test_transformed_2, -Diabetes_binary),
                              type='prob')
 #convert variable Diabetes_binary from factor to numeric in order to use logLoss function
-log_loss_rf <- logLoss(as.numeric(as.character(test_transformed_2$Diabetes_binary) == "Prediabetes or diabetes"),
-                                   predicted_prob_rf$`Prediabetes or diabetes`)
+log_loss_rf <- logLoss(as.numeric(as.character(test_transformed_2$Diabetes_binary) == "Prediabetes_or_diabetes"),
+                                   predicted_prob_rf$Prediabetes_or_diabetes)
 
 #list of log-loss values obtained from each model
 list(log_loss_logistic_M3 = log_loss_logistic_M3,
@@ -363,3 +363,4 @@ list(log_loss_logistic_M3 = log_loss_logistic_M3,
      log_loss_rf = log_loss_rf)
 ```
 
+From the result, we can see that the random forest tree model has the lowest log-loss value (0.3471412) among all the models, which means that the random forest tree model's predicted probabilities are cloest to the actual observed outcomes among all models. Therefore, the random forest tree model overall did the best job (in terms of log-loss metric) on the test set.
