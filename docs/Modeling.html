@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -99,8 +133,1198 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load packages needed</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tidyverse' was built under R version 4.3.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggplot2' was built under R version 4.3.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'readr' was built under R version 4.3.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'caret' was built under R version 4.3.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: lattice
+
+Attaching package: 'caret'
+
+The following object is masked from 'package:purrr':
+
+    lift</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Metrics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'Metrics' was built under R version 4.3.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'Metrics'
+
+The following objects are masked from 'package:caret':
+
+    precision, recall</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#read in csv data</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>data_original <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'diabetes_binary_health_indicators_BRFSS2015.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 253680 Columns: 22
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+dbl (22): Diabetes_binary, HighBP, HighChol, CholCheck, BMI, Smoker, Stroke,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data_original)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>spc_tbl_ [253,680 × 22] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ Diabetes_binary     : num [1:253680] 0 0 0 0 0 0 0 0 1 0 ...
+ $ HighBP              : num [1:253680] 1 0 1 1 1 1 1 1 1 0 ...
+ $ HighChol            : num [1:253680] 1 0 1 0 1 1 0 1 1 0 ...
+ $ CholCheck           : num [1:253680] 1 0 1 1 1 1 1 1 1 1 ...
+ $ BMI                 : num [1:253680] 40 25 28 27 24 25 30 25 30 24 ...
+ $ Smoker              : num [1:253680] 1 1 0 0 0 1 1 1 1 0 ...
+ $ Stroke              : num [1:253680] 0 0 0 0 0 0 0 0 0 0 ...
+ $ HeartDiseaseorAttack: num [1:253680] 0 0 0 0 0 0 0 0 1 0 ...
+ $ PhysActivity        : num [1:253680] 0 1 0 1 1 1 0 1 0 0 ...
+ $ Fruits              : num [1:253680] 0 0 1 1 1 1 0 0 1 0 ...
+ $ Veggies             : num [1:253680] 1 0 0 1 1 1 0 1 1 1 ...
+ $ HvyAlcoholConsump   : num [1:253680] 0 0 0 0 0 0 0 0 0 0 ...
+ $ AnyHealthcare       : num [1:253680] 1 0 1 1 1 1 1 1 1 1 ...
+ $ NoDocbcCost         : num [1:253680] 0 1 1 0 0 0 0 0 0 0 ...
+ $ GenHlth             : num [1:253680] 5 3 5 2 2 2 3 3 5 2 ...
+ $ MentHlth            : num [1:253680] 18 0 30 0 3 0 0 0 30 0 ...
+ $ PhysHlth            : num [1:253680] 15 0 30 0 0 2 14 0 30 0 ...
+ $ DiffWalk            : num [1:253680] 1 0 1 0 0 0 0 1 1 0 ...
+ $ Sex                 : num [1:253680] 0 0 0 0 0 1 0 0 0 1 ...
+ $ Age                 : num [1:253680] 9 7 9 11 11 10 9 11 9 8 ...
+ $ Education           : num [1:253680] 4 6 4 3 5 6 6 4 5 4 ...
+ $ Income              : num [1:253680] 3 1 8 6 4 8 7 4 1 3 ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   Diabetes_binary = col_double(),
+  ..   HighBP = col_double(),
+  ..   HighChol = col_double(),
+  ..   CholCheck = col_double(),
+  ..   BMI = col_double(),
+  ..   Smoker = col_double(),
+  ..   Stroke = col_double(),
+  ..   HeartDiseaseorAttack = col_double(),
+  ..   PhysActivity = col_double(),
+  ..   Fruits = col_double(),
+  ..   Veggies = col_double(),
+  ..   HvyAlcoholConsump = col_double(),
+  ..   AnyHealthcare = col_double(),
+  ..   NoDocbcCost = col_double(),
+  ..   GenHlth = col_double(),
+  ..   MentHlth = col_double(),
+  ..   PhysHlth = col_double(),
+  ..   DiffWalk = col_double(),
+  ..   Sex = col_double(),
+  ..   Age = col_double(),
+  ..   Education = col_double(),
+  ..   Income = col_double()
+  .. )
+ - attr(*, "problems")=&lt;externalptr&gt; </code></pre>
+</div>
+</div>
+<p>Next, we can check whether there are duplicated data in this dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>deplicates <span class="ot">&lt;-</span> data_original[<span class="fu">duplicated</span>(data_original), ]</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(deplicates)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 24206</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#from the output, we see that there are 24206 duplicates</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#then we need to exclude data that are duplicated</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#dataset data is updated here</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>data_no_duplicates <span class="ot">&lt;-</span> data_original[<span class="sc">!</span><span class="fu">duplicated</span>(data_original), ]</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(data_no_duplicates)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 229474</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#from the output, there are total 229,474 rows in the updated dataset data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we want to convert numeric variables to factors according to previous sorted unique values for each variable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data_no_duplicates</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Diabetes_binary <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>Diabetes_binary, </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No diabetes"</span>, <span class="st">"Prediabetes or diabetes"</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>HighBP <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>HighBP,</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No high BP"</span>, <span class="st">"High BP"</span>)</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>HighChol <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>HighChol,</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No high cholesterol"</span>, <span class="st">"High cholesterol"</span>)</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>CholCheck <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>CholCheck,</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No cholesterol check"</span>, <span class="st">"Cholesterol check"</span>)</span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Smoker <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>Smoker,</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)</span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Stroke <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>Stroke,</span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)</span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>HeartDiseaseorAttack <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>HeartDiseaseorAttack,</span>
+<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)</span>
+<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-45"><a href="#cb21-45" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>PhysActivity <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>PhysActivity,</span>
+<span id="cb21-47"><a href="#cb21-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)</span>
+<span id="cb21-49"><a href="#cb21-49" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-50"><a href="#cb21-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-51"><a href="#cb21-51" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Fruits <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-52"><a href="#cb21-52" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>Fruits,</span>
+<span id="cb21-53"><a href="#cb21-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-54"><a href="#cb21-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)</span>
+<span id="cb21-55"><a href="#cb21-55" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-56"><a href="#cb21-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-57"><a href="#cb21-57" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Veggies <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-58"><a href="#cb21-58" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>Veggies,</span>
+<span id="cb21-59"><a href="#cb21-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-60"><a href="#cb21-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)</span>
+<span id="cb21-61"><a href="#cb21-61" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-62"><a href="#cb21-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-63"><a href="#cb21-63" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>HvyAlcoholConsump <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-64"><a href="#cb21-64" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>HvyAlcoholConsump,</span>
+<span id="cb21-65"><a href="#cb21-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-66"><a href="#cb21-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)</span>
+<span id="cb21-67"><a href="#cb21-67" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-68"><a href="#cb21-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-69"><a href="#cb21-69" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>AnyHealthcare <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-70"><a href="#cb21-70" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>AnyHealthcare,</span>
+<span id="cb21-71"><a href="#cb21-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-72"><a href="#cb21-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)</span>
+<span id="cb21-73"><a href="#cb21-73" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-74"><a href="#cb21-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-75"><a href="#cb21-75" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>NoDocbcCost <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-76"><a href="#cb21-76" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>NoDocbcCost,</span>
+<span id="cb21-77"><a href="#cb21-77" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-78"><a href="#cb21-78" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)</span>
+<span id="cb21-79"><a href="#cb21-79" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-80"><a href="#cb21-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-81"><a href="#cb21-81" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>GenHlth <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-82"><a href="#cb21-82" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>GenHlth,</span>
+<span id="cb21-83"><a href="#cb21-83" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>), </span>
+<span id="cb21-84"><a href="#cb21-84" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Excellent"</span>, <span class="st">"Very good"</span>, <span class="st">"Good"</span>, <span class="st">"Fair"</span>, <span class="st">"Poor"</span>)</span>
+<span id="cb21-85"><a href="#cb21-85" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-86"><a href="#cb21-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-87"><a href="#cb21-87" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>DiffWalk <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-88"><a href="#cb21-88" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>DiffWalk,</span>
+<span id="cb21-89"><a href="#cb21-89" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-90"><a href="#cb21-90" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)</span>
+<span id="cb21-91"><a href="#cb21-91" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-92"><a href="#cb21-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-93"><a href="#cb21-93" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Sex <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-94"><a href="#cb21-94" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>Sex,</span>
+<span id="cb21-95"><a href="#cb21-95" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
+<span id="cb21-96"><a href="#cb21-96" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Female"</span>, <span class="st">"Male"</span>)</span>
+<span id="cb21-97"><a href="#cb21-97" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-98"><a href="#cb21-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-99"><a href="#cb21-99" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-100"><a href="#cb21-100" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>Age,</span>
+<span id="cb21-101"><a href="#cb21-101" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">13</span>), </span>
+<span id="cb21-102"><a href="#cb21-102" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"18-24"</span>, <span class="st">"25-29"</span>, <span class="st">"30-34"</span>, <span class="st">"35-39"</span>, <span class="st">"40-44"</span>, <span class="st">"45-49"</span>, <span class="st">"50-54"</span>, <span class="st">"55-59"</span>, <span class="st">"60-64"</span>, <span class="st">"65-69"</span>, <span class="st">"70-74"</span>, <span class="st">"75-79"</span>, <span class="st">"80 or older"</span>)</span>
+<span id="cb21-103"><a href="#cb21-103" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-104"><a href="#cb21-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-105"><a href="#cb21-105" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Education <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-106"><a href="#cb21-106" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>Education,</span>
+<span id="cb21-107"><a href="#cb21-107" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>), </span>
+<span id="cb21-108"><a href="#cb21-108" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Never attended school or only kindergarten"</span>, <span class="st">"Elementary"</span>, <span class="st">"Some high school"</span>, <span class="st">"High school graduate"</span>, <span class="st">"Some college or technical school"</span>, <span class="st">"College graduate"</span>)</span>
+<span id="cb21-109"><a href="#cb21-109" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-110"><a href="#cb21-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-111"><a href="#cb21-111" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Income <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb21-112"><a href="#cb21-112" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>Income,</span>
+<span id="cb21-113"><a href="#cb21-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>), </span>
+<span id="cb21-114"><a href="#cb21-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Less than $10,000"</span>, <span class="st">"$10,000 to less than $15,000"</span>, <span class="st">"$15,000 to less than $20,000"</span>, <span class="st">"$20,000 to less than $25,000"</span>, <span class="st">"$25,000 to less than $35,000"</span>, <span class="st">"$35,000 to less than $50,000"</span>, <span class="st">"$50,000 to less than $75,000"</span>, <span class="st">"$75,000 or more"</span>)</span>
+<span id="cb21-115"><a href="#cb21-115" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-116"><a href="#cb21-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-117"><a href="#cb21-117" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [229,474 × 22] (S3: tbl_df/tbl/data.frame)
+ $ Diabetes_binary     : Factor w/ 2 levels "No diabetes",..: 1 1 1 1 1 1 1 1 2 1 ...
+ $ HighBP              : Factor w/ 2 levels "No high BP","High BP": 2 1 2 2 2 2 2 2 2 1 ...
+ $ HighChol            : Factor w/ 2 levels "No high cholesterol",..: 2 1 2 1 2 2 1 2 2 1 ...
+ $ CholCheck           : Factor w/ 2 levels "No cholesterol check",..: 2 1 2 2 2 2 2 2 2 2 ...
+ $ BMI                 : num [1:229474] 40 25 28 27 24 25 30 25 30 24 ...
+ $ Smoker              : Factor w/ 2 levels "No","Yes": 2 2 1 1 1 2 2 2 2 1 ...
+ $ Stroke              : Factor w/ 2 levels "No","Yes": 1 1 1 1 1 1 1 1 1 1 ...
+ $ HeartDiseaseorAttack: Factor w/ 2 levels "No","Yes": 1 1 1 1 1 1 1 1 2 1 ...
+ $ PhysActivity        : Factor w/ 2 levels "No","Yes": 1 2 1 2 2 2 1 2 1 1 ...
+ $ Fruits              : Factor w/ 2 levels "No","Yes": 1 1 2 2 2 2 1 1 2 1 ...
+ $ Veggies             : Factor w/ 2 levels "No","Yes": 2 1 1 2 2 2 1 2 2 2 ...
+ $ HvyAlcoholConsump   : Factor w/ 2 levels "No","Yes": 1 1 1 1 1 1 1 1 1 1 ...
+ $ AnyHealthcare       : Factor w/ 2 levels "No","Yes": 2 1 2 2 2 2 2 2 2 2 ...
+ $ NoDocbcCost         : Factor w/ 2 levels "No","Yes": 1 2 2 1 1 1 1 1 1 1 ...
+ $ GenHlth             : Factor w/ 5 levels "Excellent","Very good",..: 5 3 5 2 2 2 3 3 5 2 ...
+ $ MentHlth            : num [1:229474] 18 0 30 0 3 0 0 0 30 0 ...
+ $ PhysHlth            : num [1:229474] 15 0 30 0 0 2 14 0 30 0 ...
+ $ DiffWalk            : Factor w/ 2 levels "No","Yes": 2 1 2 1 1 1 1 2 2 1 ...
+ $ Sex                 : Factor w/ 2 levels "Female","Male": 1 1 1 1 1 2 1 1 1 2 ...
+ $ Age                 : Factor w/ 13 levels "18-24","25-29",..: 9 7 9 11 11 10 9 11 9 8 ...
+ $ Education           : Factor w/ 6 levels "Never attended school or only kindergarten",..: 4 6 4 3 5 6 6 4 5 4 ...
+ $ Income              : Factor w/ 8 levels "Less than $10,000",..: 3 1 8 6 4 8 7 4 1 3 ...</code></pre>
+</div>
+</div>
+</section>
+<section id="split-data" class="level2">
+<h2 class="anchored" data-anchor-id="split-data">Split Data</h2>
+<p>Split this data into a training and test set. Before modeling, let’s scale and centralized data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>trainIndex <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(data<span class="sc">$</span>Diabetes_binary, <span class="at">p =</span> .<span class="dv">7</span>,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">list =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">times =</span> <span class="dv">1</span>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span>  data[trainIndex, ]</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> data[<span class="sc">-</span>trainIndex, ]</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">#check the dimensions of our training data and testing data frame</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(train_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 160632     22</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(test_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 68842    22</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>pre_proc_values <span class="ot">&lt;-</span> <span class="fu">preProcess</span>(train_data, <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>))</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Scaling and centralizing train and test data sets.</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>train_transformed <span class="ot">&lt;-</span> <span class="fu">predict</span>(pre_proc_values, train_data)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>test_transformed <span class="ot">&lt;-</span> <span class="fu">predict</span>(pre_proc_values, test_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 <section id="logistic-regression-models" class="level2">
 <h2 class="anchored" data-anchor-id="logistic-regression-models">Logistic Regression Models</h2>
+<section id="logistic-regression-model-1" class="level3">
+<h3 class="anchored" data-anchor-id="logistic-regression-model-1">Logistic regression Model 1</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>trctrl <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"repeatedcv"</span>, <span class="at">number =</span> <span class="dv">5</span>, <span class="at">repeats =</span> <span class="dv">3</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>logistic_M1_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(Diabetes_binary <span class="sc">~</span> ., </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_transformed, </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl)</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(logistic_M1_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+NULL
+
+Coefficients:
+                                              Estimate Std. Error z value
+(Intercept)                                 -6.2347186  0.2757166 -22.613
+`HighBPHigh BP`                              0.7009689  0.0176846  39.637
+`HighCholHigh cholesterol`                   0.5098256  0.0163628  31.158
+`CholCheckCholesterol check`                 1.2547512  0.0820367  15.295
+BMI                                          0.3848860  0.0074251  51.836
+SmokerYes                                   -0.0559079  0.0159842  -3.498
+StrokeYes                                    0.1523818  0.0296835   5.134
+HeartDiseaseorAttackYes                      0.2442461  0.0212239  11.508
+PhysActivityYes                             -0.0435019  0.0171669  -2.534
+FruitsYes                                    0.0097796  0.0164504   0.594
+VeggiesYes                                  -0.0196428  0.0189190  -1.038
+HvyAlcoholConsumpYes                        -0.8089641  0.0460353 -17.573
+AnyHealthcareYes                             0.1099641  0.0402194   2.734
+NoDocbcCostYes                              -0.0152901  0.0273728  -0.559
+`GenHlthVery good`                           0.6794743  0.0410513  16.552
+GenHlthGood                                  1.3223897  0.0399248  33.122
+GenHlthFair                                  1.7634564  0.0429500  41.058
+GenHlthPoor                                  1.9562313  0.0509998  38.358
+MentHlth                                    -0.0287460  0.0078185  -3.677
+PhysHlth                                    -0.0388155  0.0086779  -4.473
+DiffWalkYes                                  0.1689826  0.0201212   8.398
+SexMale                                      0.2844973  0.0162228  17.537
+`Age25-29`                                   0.1110006  0.1720526   0.645
+`Age30-34`                                   0.4054825  0.1540060   2.633
+`Age35-39`                                   0.8364804  0.1456727   5.742
+`Age40-44`                                   1.0681165  0.1423933   7.501
+`Age45-49`                                   1.3271902  0.1400767   9.475
+`Age50-54`                                   1.5857111  0.1385943  11.441
+`Age55-59`                                   1.6434794  0.1381857  11.893
+`Age60-64`                                   1.8281311  0.1378984  13.257
+`Age65-69`                                   2.0022403  0.1379263  14.517
+`Age70-74`                                   2.0384061  0.1383926  14.729
+`Age75-79`                                   1.9328588  0.1392443  13.881
+`Age80 or older`                             1.7618580  0.1393830  12.640
+EducationElementary                         -0.1638556  0.2242264  -0.731
+`EducationSome high school`                 -0.2722987  0.2218474  -1.227
+`EducationHigh school graduate`             -0.3365269  0.2200831  -1.529
+`EducationSome college or technical school` -0.3196790  0.2201863  -1.452
+`EducationCollege graduate`                 -0.3659975  0.2203238  -1.661
+`Income$10,000 to less than $15,000`         0.0105438  0.0422066   0.250
+`Income$15,000 to less than $20,000`        -0.0005075  0.0407396  -0.012
+`Income$20,000 to less than $25,000`        -0.0527819  0.0399763  -1.320
+`Income$25,000 to less than $35,000`        -0.1291474  0.0395210  -3.268
+`Income$35,000 to less than $50,000`        -0.2224874  0.0390112  -5.703
+`Income$50,000 to less than $75,000`        -0.2374939  0.0394334  -6.023
+`Income$75,000 or more`                     -0.3152682  0.0390453  -8.074
+                                            Pr(&gt;|z|)    
+(Intercept)                                  &lt; 2e-16 ***
+`HighBPHigh BP`                              &lt; 2e-16 ***
+`HighCholHigh cholesterol`                   &lt; 2e-16 ***
+`CholCheckCholesterol check`                 &lt; 2e-16 ***
+BMI                                          &lt; 2e-16 ***
+SmokerYes                                   0.000469 ***
+StrokeYes                                   2.84e-07 ***
+HeartDiseaseorAttackYes                      &lt; 2e-16 ***
+PhysActivityYes                             0.011275 *  
+FruitsYes                                   0.552185    
+VeggiesYes                                  0.299149    
+HvyAlcoholConsumpYes                         &lt; 2e-16 ***
+AnyHealthcareYes                            0.006255 ** 
+NoDocbcCostYes                              0.576443    
+`GenHlthVery good`                           &lt; 2e-16 ***
+GenHlthGood                                  &lt; 2e-16 ***
+GenHlthFair                                  &lt; 2e-16 ***
+GenHlthPoor                                  &lt; 2e-16 ***
+MentHlth                                    0.000236 ***
+PhysHlth                                    7.72e-06 ***
+DiffWalkYes                                  &lt; 2e-16 ***
+SexMale                                      &lt; 2e-16 ***
+`Age25-29`                                  0.518827    
+`Age30-34`                                  0.008466 ** 
+`Age35-39`                                  9.35e-09 ***
+`Age40-44`                                  6.33e-14 ***
+`Age45-49`                                   &lt; 2e-16 ***
+`Age50-54`                                   &lt; 2e-16 ***
+`Age55-59`                                   &lt; 2e-16 ***
+`Age60-64`                                   &lt; 2e-16 ***
+`Age65-69`                                   &lt; 2e-16 ***
+`Age70-74`                                   &lt; 2e-16 ***
+`Age75-79`                                   &lt; 2e-16 ***
+`Age80 or older`                             &lt; 2e-16 ***
+EducationElementary                         0.464926    
+`EducationSome high school`                 0.219667    
+`EducationHigh school graduate`             0.126242    
+`EducationSome college or technical school` 0.146541    
+`EducationCollege graduate`                 0.096677 .  
+`Income$10,000 to less than $15,000`        0.802730    
+`Income$15,000 to less than $20,000`        0.990060    
+`Income$20,000 to less than $25,000`        0.186725    
+`Income$25,000 to less than $35,000`        0.001084 ** 
+`Income$35,000 to less than $50,000`        1.18e-08 ***
+`Income$50,000 to less than $75,000`        1.72e-09 ***
+`Income$75,000 or more`                     6.78e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 137432  on 160631  degrees of freedom
+Residual deviance: 109872  on 160586  degrees of freedom
+AIC: 109964
+
+Number of Fisher Scoring iterations: 6</code></pre>
+</div>
+</div>
+</section>
+<section id="logistic-regression-model-2" class="level3">
+<h3 class="anchored" data-anchor-id="logistic-regression-model-2">Logistic regression Model 2</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>logistic_M2_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(Diabetes_binary <span class="sc">~</span> . <span class="sc">-</span> NoDocbcCost <span class="sc">-</span> Fruits <span class="sc">-</span> AnyHealthcare <span class="sc">+</span> PhysHlth<span class="sc">:</span>GenHlth <span class="sc">+</span> PhysHlth<span class="sc">:</span>DiffWalk <span class="sc">+</span> GenHlth<span class="sc">:</span>DiffWalk <span class="sc">+</span> Income<span class="sc">:</span>Education <span class="sc">+</span> Income<span class="sc">:</span>GenHlth <span class="sc">+</span> Income<span class="sc">:</span>DiffWalk,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_transformed, </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(logistic_M2_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+NULL
+
+Coefficients:
+                                                                                Estimate
+(Intercept)                                                                    -5.742396
+`HighBPHigh BP`                                                                 0.696383
+`HighCholHigh cholesterol`                                                      0.510167
+`CholCheckCholesterol check`                                                    1.264967
+BMI                                                                             0.383679
+SmokerYes                                                                      -0.056011
+StrokeYes                                                                       0.156791
+HeartDiseaseorAttackYes                                                         0.244692
+PhysActivityYes                                                                -0.038766
+VeggiesYes                                                                     -0.016794
+HvyAlcoholConsumpYes                                                           -0.812409
+`GenHlthVery good`                                                              0.645724
+GenHlthGood                                                                     1.052128
+GenHlthFair                                                                     1.582597
+GenHlthPoor                                                                     1.724207
+MentHlth                                                                       -0.026745
+PhysHlth                                                                        0.246436
+DiffWalkYes                                                                     1.156138
+SexMale                                                                         0.281888
+`Age25-29`                                                                      0.123586
+`Age30-34`                                                                      0.421816
+`Age35-39`                                                                      0.854679
+`Age40-44`                                                                      1.087675
+`Age45-49`                                                                      1.348428
+`Age50-54`                                                                      1.612645
+`Age55-59`                                                                      1.671527
+`Age60-64`                                                                      1.854945
+`Age65-69`                                                                      2.032406
+`Age70-74`                                                                      2.069017
+`Age75-79`                                                                      1.959504
+`Age80 or older`                                                                1.781684
+EducationElementary                                                            -0.246953
+`EducationSome high school`                                                    -0.590027
+`EducationHigh school graduate`                                                -0.495210
+`EducationSome college or technical school`                                    -0.599469
+`EducationCollege graduate`                                                    -0.614971
+`Income$10,000 to less than $15,000`                                            0.462242
+`Income$15,000 to less than $20,000`                                            0.223956
+`Income$20,000 to less than $25,000`                                           -0.093763
+`Income$25,000 to less than $35,000`                                           -2.154958
+`Income$35,000 to less than $50,000`                                           -1.199278
+`Income$50,000 to less than $75,000`                                           -1.658952
+`Income$75,000 or more`                                                        -0.506298
+`GenHlthVery good:PhysHlth`                                                    -0.289552
+`GenHlthGood:PhysHlth`                                                         -0.272979
+`GenHlthFair:PhysHlth`                                                         -0.311729
+`GenHlthPoor:PhysHlth`                                                         -0.361488
+`PhysHlth:DiffWalkYes`                                                          0.033684
+`GenHlthVery good:DiffWalkYes`                                                 -0.679357
+`GenHlthGood:DiffWalkYes`                                                      -0.895370
+`GenHlthFair:DiffWalkYes`                                                      -1.040425
+`GenHlthPoor:DiffWalkYes`                                                      -0.996601
+`EducationElementary:Income$10,000 to less than $15,000`                       -0.154786
+`EducationSome high school:Income$10,000 to less than $15,000`                  0.006115
+`EducationHigh school graduate:Income$10,000 to less than $15,000`             -0.139350
+`EducationSome college or technical school:Income$10,000 to less than $15,000` -0.137132
+`EducationCollege graduate:Income$10,000 to less than $15,000`                 -0.083486
+`EducationElementary:Income$15,000 to less than $20,000`                       -0.389417
+`EducationSome high school:Income$15,000 to less than $20,000`                  0.035861
+`EducationHigh school graduate:Income$15,000 to less than $20,000`             -0.146971
+`EducationSome college or technical school:Income$15,000 to less than $20,000` -0.087301
+`EducationCollege graduate:Income$15,000 to less than $20,000`                 -0.004099
+`EducationElementary:Income$20,000 to less than $25,000`                       -0.317078
+`EducationSome high school:Income$20,000 to less than $25,000`                  0.201009
+`EducationHigh school graduate:Income$20,000 to less than $25,000`             -0.012300
+`EducationSome college or technical school:Income$20,000 to less than $25,000`  0.074704
+`EducationCollege graduate:Income$20,000 to less than $25,000`                  0.040659
+`EducationElementary:Income$25,000 to less than $35,000`                        1.847922
+`EducationSome high school:Income$25,000 to less than $35,000`                  1.892843
+`EducationHigh school graduate:Income$25,000 to less than $35,000`              1.779742
+`EducationSome college or technical school:Income$25,000 to less than $35,000`  1.930193
+`EducationCollege graduate:Income$25,000 to less than $35,000`                  1.907890
+`EducationElementary:Income$35,000 to less than $50,000`                        0.594268
+`EducationSome high school:Income$35,000 to less than $50,000`                  0.877646
+`EducationHigh school graduate:Income$35,000 to less than $50,000`              0.765281
+`EducationSome college or technical school:Income$35,000 to less than $50,000`  0.910424
+`EducationCollege graduate:Income$35,000 to less than $50,000`                  0.929839
+`EducationElementary:Income$50,000 to less than $75,000`                        0.777946
+`EducationSome high school:Income$50,000 to less than $75,000`                  1.270017
+`EducationHigh school graduate:Income$50,000 to less than $75,000`              1.040198
+`EducationSome college or technical school:Income$50,000 to less than $75,000`  1.197900
+`EducationCollege graduate:Income$50,000 to less than $75,000`                  1.129961
+`EducationElementary:Income$75,000 or more`                                    -0.377689
+`EducationSome high school:Income$75,000 or more`                               0.090556
+`EducationHigh school graduate:Income$75,000 or more`                          -0.275085
+`EducationSome college or technical school:Income$75,000 or more`              -0.044879
+`EducationCollege graduate:Income$75,000 or more`                              -0.129146
+`GenHlthVery good:Income$10,000 to less than $15,000`                          -0.269488
+`GenHlthGood:Income$10,000 to less than $15,000`                               -0.303110
+`GenHlthFair:Income$10,000 to less than $15,000`                               -0.269096
+`GenHlthPoor:Income$10,000 to less than $15,000`                               -0.210414
+`GenHlthVery good:Income$15,000 to less than $20,000`                          -0.251481
+`GenHlthGood:Income$15,000 to less than $20,000`                               -0.060062
+`GenHlthFair:Income$15,000 to less than $20,000`                               -0.177987
+`GenHlthPoor:Income$15,000 to less than $20,000`                               -0.007989
+`GenHlthVery good:Income$20,000 to less than $25,000`                          -0.114859
+`GenHlthGood:Income$20,000 to less than $25,000`                                0.041743
+`GenHlthFair:Income$20,000 to less than $25,000`                                0.038771
+`GenHlthPoor:Income$20,000 to less than $25,000`                                0.247265
+`GenHlthVery good:Income$25,000 to less than $35,000`                          -0.022991
+`GenHlthGood:Income$25,000 to less than $35,000`                                0.211315
+`GenHlthFair:Income$25,000 to less than $35,000`                                0.259347
+`GenHlthPoor:Income$25,000 to less than $35,000`                                0.446511
+`GenHlthVery good:Income$35,000 to less than $50,000`                          -0.122268
+`GenHlthGood:Income$35,000 to less than $50,000`                                0.197556
+`GenHlthFair:Income$35,000 to less than $50,000`                                0.170794
+`GenHlthPoor:Income$35,000 to less than $50,000`                                0.350416
+`GenHlthVery good:Income$50,000 to less than $75,000`                           0.088705
+`GenHlthGood:Income$50,000 to less than $75,000`                                0.398559
+`GenHlthFair:Income$50,000 to less than $75,000`                                0.382247
+`GenHlthPoor:Income$50,000 to less than $75,000`                                0.662892
+`GenHlthVery good:Income$75,000 or more`                                        0.124794
+`GenHlthGood:Income$75,000 or more`                                             0.446353
+`GenHlthFair:Income$75,000 or more`                                             0.464248
+`GenHlthPoor:Income$75,000 or more`                                             0.832606
+`DiffWalkYes:Income$10,000 to less than $15,000`                               -0.136619
+`DiffWalkYes:Income$15,000 to less than $20,000`                               -0.028996
+`DiffWalkYes:Income$20,000 to less than $25,000`                               -0.102249
+`DiffWalkYes:Income$25,000 to less than $35,000`                               -0.122715
+`DiffWalkYes:Income$35,000 to less than $50,000`                               -0.066576
+`DiffWalkYes:Income$50,000 to less than $75,000`                               -0.105781
+`DiffWalkYes:Income$75,000 or more`                                            -0.142344
+                                                                               Std. Error
+(Intercept)                                                                      0.516503
+`HighBPHigh BP`                                                                  0.017700
+`HighCholHigh cholesterol`                                                       0.016377
+`CholCheckCholesterol check`                                                     0.081791
+BMI                                                                              0.007427
+SmokerYes                                                                        0.015983
+StrokeYes                                                                        0.029645
+HeartDiseaseorAttackYes                                                          0.021219
+PhysActivityYes                                                                  0.017093
+VeggiesYes                                                                       0.018451
+HvyAlcoholConsumpYes                                                             0.046095
+`GenHlthVery good`                                                               0.236503
+GenHlthGood                                                                      0.219518
+GenHlthFair                                                                      0.217713
+GenHlthPoor                                                                      0.230534
+MentHlth                                                                         0.007766
+PhysHlth                                                                         0.057474
+DiffWalkYes                                                                      0.136774
+SexMale                                                                          0.016207
+`Age25-29`                                                                       0.172188
+`Age30-34`                                                                       0.154157
+`Age35-39`                                                                       0.145832
+`Age40-44`                                                                       0.142550
+`Age45-49`                                                                       0.140231
+`Age50-54`                                                                       0.138748
+`Age55-59`                                                                       0.138325
+`Age60-64`                                                                       0.138031
+`Age65-69`                                                                       0.138013
+`Age70-74`                                                                       0.138461
+`Age75-79`                                                                       0.139286
+`Age80 or older`                                                                 0.139373
+EducationElementary                                                              0.452276
+`EducationSome high school`                                                      0.449771
+`EducationHigh school graduate`                                                  0.446379
+`EducationSome college or technical school`                                      0.448490
+`EducationCollege graduate`                                                      0.454159
+`Income$10,000 to less than $15,000`                                             0.736131
+`Income$15,000 to less than $20,000`                                             0.749260
+`Income$20,000 to less than $25,000`                                             0.831032
+`Income$25,000 to less than $35,000`                                             1.177964
+`Income$35,000 to less than $50,000`                                             0.950035
+`Income$50,000 to less than $75,000`                                             1.205376
+`Income$75,000 or more`                                                          0.955276
+`GenHlthVery good:PhysHlth`                                                      0.063733
+`GenHlthGood:PhysHlth`                                                           0.059015
+`GenHlthFair:PhysHlth`                                                           0.058466
+`GenHlthPoor:PhysHlth`                                                           0.061313
+`PhysHlth:DiffWalkYes`                                                           0.017086
+`GenHlthVery good:DiffWalkYes`                                                   0.130375
+`GenHlthGood:DiffWalkYes`                                                        0.123243
+`GenHlthFair:DiffWalkYes`                                                        0.124598
+`GenHlthPoor:DiffWalkYes`                                                        0.137026
+`EducationElementary:Income$10,000 to less than $15,000`                         0.697604
+`EducationSome high school:Income$10,000 to less than $15,000`                   0.692775
+`EducationHigh school graduate:Income$10,000 to less than $15,000`               0.688019
+`EducationSome college or technical school:Income$10,000 to less than $15,000`   0.690195
+`EducationCollege graduate:Income$10,000 to less than $15,000`                   0.696747
+`EducationElementary:Income$15,000 to less than $20,000`                         0.717554
+`EducationSome high school:Income$15,000 to less than $20,000`                   0.711501
+`EducationHigh school graduate:Income$15,000 to less than $20,000`               0.706783
+`EducationSome college or technical school:Income$15,000 to less than $20,000`   0.708727
+`EducationCollege graduate:Income$15,000 to less than $20,000`                   0.714055
+`EducationElementary:Income$20,000 to less than $25,000`                         0.809045
+`EducationSome high school:Income$20,000 to less than $25,000`                   0.801880
+`EducationHigh school graduate:Income$20,000 to less than $25,000`               0.796980
+`EducationSome college or technical school:Income$20,000 to less than $25,000`   0.798480
+`EducationCollege graduate:Income$20,000 to less than $25,000`                   0.802805
+`EducationElementary:Income$25,000 to less than $35,000`                         1.164423
+`EducationSome high school:Income$25,000 to less than $35,000`                   1.158970
+`EducationHigh school graduate:Income$25,000 to less than $35,000`               1.154637
+`EducationSome college or technical school:Income$25,000 to less than $35,000`   1.155537
+`EducationCollege graduate:Income$25,000 to less than $35,000`                   1.158073
+`EducationElementary:Income$35,000 to less than $50,000`                         0.943287
+`EducationSome high school:Income$35,000 to less than $50,000`                   0.931004
+`EducationHigh school graduate:Income$35,000 to less than $50,000`               0.923354
+`EducationSome college or technical school:Income$35,000 to less than $50,000`   0.924375
+`EducationCollege graduate:Income$35,000 to less than $50,000`                   0.927218
+`EducationElementary:Income$50,000 to less than $75,000`                         1.223448
+`EducationSome high school:Income$50,000 to less than $75,000`                   1.194076
+`EducationHigh school graduate:Income$50,000 to less than $75,000`               1.185121
+`EducationSome college or technical school:Income$50,000 to less than $75,000`   1.185763
+`EducationCollege graduate:Income$50,000 to less than $75,000`                   1.187833
+`EducationElementary:Income$75,000 or more`                                      0.990338
+`EducationSome high school:Income$75,000 or more`                                0.945849
+`EducationHigh school graduate:Income$75,000 or more`                            0.931203
+`EducationSome college or technical school:Income$75,000 or more`                0.931757
+`EducationCollege graduate:Income$75,000 or more`                                0.934306
+`GenHlthVery good:Income$10,000 to less than $15,000`                            0.300379
+`GenHlthGood:Income$10,000 to less than $15,000`                                 0.279486
+`GenHlthFair:Income$10,000 to less than $15,000`                                 0.277564
+`GenHlthPoor:Income$10,000 to less than $15,000`                                 0.284647
+`GenHlthVery good:Income$15,000 to less than $20,000`                            0.283858
+`GenHlthGood:Income$15,000 to less than $20,000`                                 0.264461
+`GenHlthFair:Income$15,000 to less than $20,000`                                 0.263362
+`GenHlthPoor:Income$15,000 to less than $20,000`                                 0.271921
+`GenHlthVery good:Income$20,000 to less than $25,000`                            0.272246
+`GenHlthGood:Income$20,000 to less than $25,000`                                 0.254566
+`GenHlthFair:Income$20,000 to less than $25,000`                                 0.253752
+`GenHlthPoor:Income$20,000 to less than $25,000`                                 0.263335
+`GenHlthVery good:Income$25,000 to less than $35,000`                            0.265502
+`GenHlthGood:Income$25,000 to less than $35,000`                                 0.248400
+`GenHlthFair:Income$25,000 to less than $35,000`                                 0.248034
+`GenHlthPoor:Income$25,000 to less than $35,000`                                 0.259759
+`GenHlthVery good:Income$35,000 to less than $50,000`                            0.255559
+`GenHlthGood:Income$35,000 to less than $50,000`                                 0.238406
+`GenHlthFair:Income$35,000 to less than $50,000`                                 0.238626
+`GenHlthPoor:Income$35,000 to less than $50,000`                                 0.251498
+`GenHlthVery good:Income$50,000 to less than $75,000`                            0.254728
+`GenHlthGood:Income$50,000 to less than $75,000`                                 0.238214
+`GenHlthFair:Income$50,000 to less than $75,000`                                 0.239013
+`GenHlthPoor:Income$50,000 to less than $75,000`                                 0.255023
+`GenHlthVery good:Income$75,000 or more`                                         0.245738
+`GenHlthGood:Income$75,000 or more`                                              0.229139
+`GenHlthFair:Income$75,000 or more`                                              0.229739
+`GenHlthPoor:Income$75,000 or more`                                              0.247091
+`DiffWalkYes:Income$10,000 to less than $15,000`                                 0.091209
+`DiffWalkYes:Income$15,000 to less than $20,000`                                 0.087648
+`DiffWalkYes:Income$20,000 to less than $25,000`                                 0.085840
+`DiffWalkYes:Income$25,000 to less than $35,000`                                 0.084906
+`DiffWalkYes:Income$35,000 to less than $50,000`                                 0.083773
+`DiffWalkYes:Income$50,000 to less than $75,000`                                 0.085867
+`DiffWalkYes:Income$75,000 or more`                                              0.084542
+                                                                               z value
+(Intercept)                                                                    -11.118
+`HighBPHigh BP`                                                                 39.344
+`HighCholHigh cholesterol`                                                      31.151
+`CholCheckCholesterol check`                                                    15.466
+BMI                                                                             51.657
+SmokerYes                                                                       -3.504
+StrokeYes                                                                        5.289
+HeartDiseaseorAttackYes                                                         11.532
+PhysActivityYes                                                                 -2.268
+VeggiesYes                                                                      -0.910
+HvyAlcoholConsumpYes                                                           -17.625
+`GenHlthVery good`                                                               2.730
+GenHlthGood                                                                      4.793
+GenHlthFair                                                                      7.269
+GenHlthPoor                                                                      7.479
+MentHlth                                                                        -3.444
+PhysHlth                                                                         4.288
+DiffWalkYes                                                                      8.453
+SexMale                                                                         17.393
+`Age25-29`                                                                       0.718
+`Age30-34`                                                                       2.736
+`Age35-39`                                                                       5.861
+`Age40-44`                                                                       7.630
+`Age45-49`                                                                       9.616
+`Age50-54`                                                                      11.623
+`Age55-59`                                                                      12.084
+`Age60-64`                                                                      13.439
+`Age65-69`                                                                      14.726
+`Age70-74`                                                                      14.943
+`Age75-79`                                                                      14.068
+`Age80 or older`                                                                12.784
+EducationElementary                                                             -0.546
+`EducationSome high school`                                                     -1.312
+`EducationHigh school graduate`                                                 -1.109
+`EducationSome college or technical school`                                     -1.337
+`EducationCollege graduate`                                                     -1.354
+`Income$10,000 to less than $15,000`                                             0.628
+`Income$15,000 to less than $20,000`                                             0.299
+`Income$20,000 to less than $25,000`                                            -0.113
+`Income$25,000 to less than $35,000`                                            -1.829
+`Income$35,000 to less than $50,000`                                            -1.262
+`Income$50,000 to less than $75,000`                                            -1.376
+`Income$75,000 or more`                                                         -0.530
+`GenHlthVery good:PhysHlth`                                                     -4.543
+`GenHlthGood:PhysHlth`                                                          -4.626
+`GenHlthFair:PhysHlth`                                                          -5.332
+`GenHlthPoor:PhysHlth`                                                          -5.896
+`PhysHlth:DiffWalkYes`                                                           1.971
+`GenHlthVery good:DiffWalkYes`                                                  -5.211
+`GenHlthGood:DiffWalkYes`                                                       -7.265
+`GenHlthFair:DiffWalkYes`                                                       -8.350
+`GenHlthPoor:DiffWalkYes`                                                       -7.273
+`EducationElementary:Income$10,000 to less than $15,000`                        -0.222
+`EducationSome high school:Income$10,000 to less than $15,000`                   0.009
+`EducationHigh school graduate:Income$10,000 to less than $15,000`              -0.203
+`EducationSome college or technical school:Income$10,000 to less than $15,000`  -0.199
+`EducationCollege graduate:Income$10,000 to less than $15,000`                  -0.120
+`EducationElementary:Income$15,000 to less than $20,000`                        -0.543
+`EducationSome high school:Income$15,000 to less than $20,000`                   0.050
+`EducationHigh school graduate:Income$15,000 to less than $20,000`              -0.208
+`EducationSome college or technical school:Income$15,000 to less than $20,000`  -0.123
+`EducationCollege graduate:Income$15,000 to less than $20,000`                  -0.006
+`EducationElementary:Income$20,000 to less than $25,000`                        -0.392
+`EducationSome high school:Income$20,000 to less than $25,000`                   0.251
+`EducationHigh school graduate:Income$20,000 to less than $25,000`              -0.015
+`EducationSome college or technical school:Income$20,000 to less than $25,000`   0.094
+`EducationCollege graduate:Income$20,000 to less than $25,000`                   0.051
+`EducationElementary:Income$25,000 to less than $35,000`                         1.587
+`EducationSome high school:Income$25,000 to less than $35,000`                   1.633
+`EducationHigh school graduate:Income$25,000 to less than $35,000`               1.541
+`EducationSome college or technical school:Income$25,000 to less than $35,000`   1.670
+`EducationCollege graduate:Income$25,000 to less than $35,000`                   1.647
+`EducationElementary:Income$35,000 to less than $50,000`                         0.630
+`EducationSome high school:Income$35,000 to less than $50,000`                   0.943
+`EducationHigh school graduate:Income$35,000 to less than $50,000`               0.829
+`EducationSome college or technical school:Income$35,000 to less than $50,000`   0.985
+`EducationCollege graduate:Income$35,000 to less than $50,000`                   1.003
+`EducationElementary:Income$50,000 to less than $75,000`                         0.636
+`EducationSome high school:Income$50,000 to less than $75,000`                   1.064
+`EducationHigh school graduate:Income$50,000 to less than $75,000`               0.878
+`EducationSome college or technical school:Income$50,000 to less than $75,000`   1.010
+`EducationCollege graduate:Income$50,000 to less than $75,000`                   0.951
+`EducationElementary:Income$75,000 or more`                                     -0.381
+`EducationSome high school:Income$75,000 or more`                                0.096
+`EducationHigh school graduate:Income$75,000 or more`                           -0.295
+`EducationSome college or technical school:Income$75,000 or more`               -0.048
+`EducationCollege graduate:Income$75,000 or more`                               -0.138
+`GenHlthVery good:Income$10,000 to less than $15,000`                           -0.897
+`GenHlthGood:Income$10,000 to less than $15,000`                                -1.085
+`GenHlthFair:Income$10,000 to less than $15,000`                                -0.969
+`GenHlthPoor:Income$10,000 to less than $15,000`                                -0.739
+`GenHlthVery good:Income$15,000 to less than $20,000`                           -0.886
+`GenHlthGood:Income$15,000 to less than $20,000`                                -0.227
+`GenHlthFair:Income$15,000 to less than $20,000`                                -0.676
+`GenHlthPoor:Income$15,000 to less than $20,000`                                -0.029
+`GenHlthVery good:Income$20,000 to less than $25,000`                           -0.422
+`GenHlthGood:Income$20,000 to less than $25,000`                                 0.164
+`GenHlthFair:Income$20,000 to less than $25,000`                                 0.153
+`GenHlthPoor:Income$20,000 to less than $25,000`                                 0.939
+`GenHlthVery good:Income$25,000 to less than $35,000`                           -0.087
+`GenHlthGood:Income$25,000 to less than $35,000`                                 0.851
+`GenHlthFair:Income$25,000 to less than $35,000`                                 1.046
+`GenHlthPoor:Income$25,000 to less than $35,000`                                 1.719
+`GenHlthVery good:Income$35,000 to less than $50,000`                           -0.478
+`GenHlthGood:Income$35,000 to less than $50,000`                                 0.829
+`GenHlthFair:Income$35,000 to less than $50,000`                                 0.716
+`GenHlthPoor:Income$35,000 to less than $50,000`                                 1.393
+`GenHlthVery good:Income$50,000 to less than $75,000`                            0.348
+`GenHlthGood:Income$50,000 to less than $75,000`                                 1.673
+`GenHlthFair:Income$50,000 to less than $75,000`                                 1.599
+`GenHlthPoor:Income$50,000 to less than $75,000`                                 2.599
+`GenHlthVery good:Income$75,000 or more`                                         0.508
+`GenHlthGood:Income$75,000 or more`                                              1.948
+`GenHlthFair:Income$75,000 or more`                                              2.021
+`GenHlthPoor:Income$75,000 or more`                                              3.370
+`DiffWalkYes:Income$10,000 to less than $15,000`                                -1.498
+`DiffWalkYes:Income$15,000 to less than $20,000`                                -0.331
+`DiffWalkYes:Income$20,000 to less than $25,000`                                -1.191
+`DiffWalkYes:Income$25,000 to less than $35,000`                                -1.445
+`DiffWalkYes:Income$35,000 to less than $50,000`                                -0.795
+`DiffWalkYes:Income$50,000 to less than $75,000`                                -1.232
+`DiffWalkYes:Income$75,000 or more`                                             -1.684
+                                                                               Pr(&gt;|z|)
+(Intercept)                                                                     &lt; 2e-16
+`HighBPHigh BP`                                                                 &lt; 2e-16
+`HighCholHigh cholesterol`                                                      &lt; 2e-16
+`CholCheckCholesterol check`                                                    &lt; 2e-16
+BMI                                                                             &lt; 2e-16
+SmokerYes                                                                      0.000458
+StrokeYes                                                                      1.23e-07
+HeartDiseaseorAttackYes                                                         &lt; 2e-16
+PhysActivityYes                                                                0.023335
+VeggiesYes                                                                     0.362728
+HvyAlcoholConsumpYes                                                            &lt; 2e-16
+`GenHlthVery good`                                                             0.006328
+GenHlthGood                                                                    1.64e-06
+GenHlthFair                                                                    3.62e-13
+GenHlthPoor                                                                    7.48e-14
+MentHlth                                                                       0.000574
+PhysHlth                                                                       1.80e-05
+DiffWalkYes                                                                     &lt; 2e-16
+SexMale                                                                         &lt; 2e-16
+`Age25-29`                                                                     0.472919
+`Age30-34`                                                                     0.006214
+`Age35-39`                                                                     4.61e-09
+`Age40-44`                                                                     2.35e-14
+`Age45-49`                                                                      &lt; 2e-16
+`Age50-54`                                                                      &lt; 2e-16
+`Age55-59`                                                                      &lt; 2e-16
+`Age60-64`                                                                      &lt; 2e-16
+`Age65-69`                                                                      &lt; 2e-16
+`Age70-74`                                                                      &lt; 2e-16
+`Age75-79`                                                                      &lt; 2e-16
+`Age80 or older`                                                                &lt; 2e-16
+EducationElementary                                                            0.585050
+`EducationSome high school`                                                    0.189575
+`EducationHigh school graduate`                                                0.267260
+`EducationSome college or technical school`                                    0.181341
+`EducationCollege graduate`                                                    0.175709
+`Income$10,000 to less than $15,000`                                           0.530047
+`Income$15,000 to less than $20,000`                                           0.765015
+`Income$20,000 to less than $25,000`                                           0.910168
+`Income$25,000 to less than $35,000`                                           0.067341
+`Income$35,000 to less than $50,000`                                           0.206823
+`Income$50,000 to less than $75,000`                                           0.168731
+`Income$75,000 or more`                                                        0.596111
+`GenHlthVery good:PhysHlth`                                                    5.54e-06
+`GenHlthGood:PhysHlth`                                                         3.73e-06
+`GenHlthFair:PhysHlth`                                                         9.72e-08
+`GenHlthPoor:PhysHlth`                                                         3.73e-09
+`PhysHlth:DiffWalkYes`                                                         0.048675
+`GenHlthVery good:DiffWalkYes`                                                 1.88e-07
+`GenHlthGood:DiffWalkYes`                                                      3.73e-13
+`GenHlthFair:DiffWalkYes`                                                       &lt; 2e-16
+`GenHlthPoor:DiffWalkYes`                                                      3.51e-13
+`EducationElementary:Income$10,000 to less than $15,000`                       0.824406
+`EducationSome high school:Income$10,000 to less than $15,000`                 0.992958
+`EducationHigh school graduate:Income$10,000 to less than $15,000`             0.839496
+`EducationSome college or technical school:Income$10,000 to less than $15,000` 0.842508
+`EducationCollege graduate:Income$10,000 to less than $15,000`                 0.904624
+`EducationElementary:Income$15,000 to less than $20,000`                       0.587336
+`EducationSome high school:Income$15,000 to less than $20,000`                 0.959802
+`EducationHigh school graduate:Income$15,000 to less than $20,000`             0.835273
+`EducationSome college or technical school:Income$15,000 to less than $20,000` 0.901965
+`EducationCollege graduate:Income$15,000 to less than $20,000`                 0.995420
+`EducationElementary:Income$20,000 to less than $25,000`                       0.695120
+`EducationSome high school:Income$20,000 to less than $25,000`                 0.802068
+`EducationHigh school graduate:Income$20,000 to less than $25,000`             0.987687
+`EducationSome college or technical school:Income$20,000 to less than $25,000` 0.925461
+`EducationCollege graduate:Income$20,000 to less than $25,000`                 0.959607
+`EducationElementary:Income$25,000 to less than $35,000`                       0.112516
+`EducationSome high school:Income$25,000 to less than $35,000`                 0.102425
+`EducationHigh school graduate:Income$25,000 to less than $35,000`             0.123223
+`EducationSome college or technical school:Income$25,000 to less than $35,000` 0.094843
+`EducationCollege graduate:Income$25,000 to less than $35,000`                 0.099462
+`EducationElementary:Income$35,000 to less than $50,000`                       0.528696
+`EducationSome high school:Income$35,000 to less than $50,000`                 0.345841
+`EducationHigh school graduate:Income$35,000 to less than $50,000`             0.407214
+`EducationSome college or technical school:Income$35,000 to less than $50,000` 0.324669
+`EducationCollege graduate:Income$35,000 to less than $50,000`                 0.315944
+`EducationElementary:Income$50,000 to less than $75,000`                       0.524866
+`EducationSome high school:Income$50,000 to less than $75,000`                 0.287511
+`EducationHigh school graduate:Income$50,000 to less than $75,000`             0.380098
+`EducationSome college or technical school:Income$50,000 to less than $75,000` 0.312382
+`EducationCollege graduate:Income$50,000 to less than $75,000`                 0.341462
+`EducationElementary:Income$75,000 or more`                                    0.702926
+`EducationSome high school:Income$75,000 or more`                              0.923727
+`EducationHigh school graduate:Income$75,000 or more`                          0.767682
+`EducationSome college or technical school:Income$75,000 or more`              0.961584
+`EducationCollege graduate:Income$75,000 or more`                              0.890062
+`GenHlthVery good:Income$10,000 to less than $15,000`                          0.369633
+`GenHlthGood:Income$10,000 to less than $15,000`                               0.278131
+`GenHlthFair:Income$10,000 to less than $15,000`                               0.332300
+`GenHlthPoor:Income$10,000 to less than $15,000`                               0.459779
+`GenHlthVery good:Income$15,000 to less than $20,000`                          0.375649
+`GenHlthGood:Income$15,000 to less than $20,000`                               0.820338
+`GenHlthFair:Income$15,000 to less than $20,000`                               0.499152
+`GenHlthPoor:Income$15,000 to less than $20,000`                               0.976561
+`GenHlthVery good:Income$20,000 to less than $25,000`                          0.673102
+`GenHlthGood:Income$20,000 to less than $25,000`                               0.869750
+`GenHlthFair:Income$20,000 to less than $25,000`                               0.878563
+`GenHlthPoor:Income$20,000 to less than $25,000`                               0.347745
+`GenHlthVery good:Income$25,000 to less than $35,000`                          0.930995
+`GenHlthGood:Income$25,000 to less than $35,000`                               0.394934
+`GenHlthFair:Income$25,000 to less than $35,000`                               0.295742
+`GenHlthPoor:Income$25,000 to less than $35,000`                               0.085624
+`GenHlthVery good:Income$35,000 to less than $50,000`                          0.632340
+`GenHlthGood:Income$35,000 to less than $50,000`                               0.407299
+`GenHlthFair:Income$35,000 to less than $50,000`                               0.474152
+`GenHlthPoor:Income$35,000 to less than $50,000`                               0.163525
+`GenHlthVery good:Income$50,000 to less than $75,000`                          0.727664
+`GenHlthGood:Income$50,000 to less than $75,000`                               0.094306
+`GenHlthFair:Income$50,000 to less than $75,000`                               0.109759
+`GenHlthPoor:Income$50,000 to less than $75,000`                               0.009340
+`GenHlthVery good:Income$75,000 or more`                                       0.611571
+`GenHlthGood:Income$75,000 or more`                                            0.051420
+`GenHlthFair:Income$75,000 or more`                                            0.043304
+`GenHlthPoor:Income$75,000 or more`                                            0.000753
+`DiffWalkYes:Income$10,000 to less than $15,000`                               0.134167
+`DiffWalkYes:Income$15,000 to less than $20,000`                               0.740781
+`DiffWalkYes:Income$20,000 to less than $25,000`                               0.233590
+`DiffWalkYes:Income$25,000 to less than $35,000`                               0.148373
+`DiffWalkYes:Income$35,000 to less than $50,000`                               0.426778
+`DiffWalkYes:Income$50,000 to less than $75,000`                               0.217977
+`DiffWalkYes:Income$75,000 or more`                                            0.092240
+                                                                                  
+(Intercept)                                                                    ***
+`HighBPHigh BP`                                                                ***
+`HighCholHigh cholesterol`                                                     ***
+`CholCheckCholesterol check`                                                   ***
+BMI                                                                            ***
+SmokerYes                                                                      ***
+StrokeYes                                                                      ***
+HeartDiseaseorAttackYes                                                        ***
+PhysActivityYes                                                                *  
+VeggiesYes                                                                        
+HvyAlcoholConsumpYes                                                           ***
+`GenHlthVery good`                                                             ** 
+GenHlthGood                                                                    ***
+GenHlthFair                                                                    ***
+GenHlthPoor                                                                    ***
+MentHlth                                                                       ***
+PhysHlth                                                                       ***
+DiffWalkYes                                                                    ***
+SexMale                                                                        ***
+`Age25-29`                                                                        
+`Age30-34`                                                                     ** 
+`Age35-39`                                                                     ***
+`Age40-44`                                                                     ***
+`Age45-49`                                                                     ***
+`Age50-54`                                                                     ***
+`Age55-59`                                                                     ***
+`Age60-64`                                                                     ***
+`Age65-69`                                                                     ***
+`Age70-74`                                                                     ***
+`Age75-79`                                                                     ***
+`Age80 or older`                                                               ***
+EducationElementary                                                               
+`EducationSome high school`                                                       
+`EducationHigh school graduate`                                                   
+`EducationSome college or technical school`                                       
+`EducationCollege graduate`                                                       
+`Income$10,000 to less than $15,000`                                              
+`Income$15,000 to less than $20,000`                                              
+`Income$20,000 to less than $25,000`                                              
+`Income$25,000 to less than $35,000`                                           .  
+`Income$35,000 to less than $50,000`                                              
+`Income$50,000 to less than $75,000`                                              
+`Income$75,000 or more`                                                           
+`GenHlthVery good:PhysHlth`                                                    ***
+`GenHlthGood:PhysHlth`                                                         ***
+`GenHlthFair:PhysHlth`                                                         ***
+`GenHlthPoor:PhysHlth`                                                         ***
+`PhysHlth:DiffWalkYes`                                                         *  
+`GenHlthVery good:DiffWalkYes`                                                 ***
+`GenHlthGood:DiffWalkYes`                                                      ***
+`GenHlthFair:DiffWalkYes`                                                      ***
+`GenHlthPoor:DiffWalkYes`                                                      ***
+`EducationElementary:Income$10,000 to less than $15,000`                          
+`EducationSome high school:Income$10,000 to less than $15,000`                    
+`EducationHigh school graduate:Income$10,000 to less than $15,000`                
+`EducationSome college or technical school:Income$10,000 to less than $15,000`    
+`EducationCollege graduate:Income$10,000 to less than $15,000`                    
+`EducationElementary:Income$15,000 to less than $20,000`                          
+`EducationSome high school:Income$15,000 to less than $20,000`                    
+`EducationHigh school graduate:Income$15,000 to less than $20,000`                
+`EducationSome college or technical school:Income$15,000 to less than $20,000`    
+`EducationCollege graduate:Income$15,000 to less than $20,000`                    
+`EducationElementary:Income$20,000 to less than $25,000`                          
+`EducationSome high school:Income$20,000 to less than $25,000`                    
+`EducationHigh school graduate:Income$20,000 to less than $25,000`                
+`EducationSome college or technical school:Income$20,000 to less than $25,000`    
+`EducationCollege graduate:Income$20,000 to less than $25,000`                    
+`EducationElementary:Income$25,000 to less than $35,000`                          
+`EducationSome high school:Income$25,000 to less than $35,000`                    
+`EducationHigh school graduate:Income$25,000 to less than $35,000`                
+`EducationSome college or technical school:Income$25,000 to less than $35,000` .  
+`EducationCollege graduate:Income$25,000 to less than $35,000`                 .  
+`EducationElementary:Income$35,000 to less than $50,000`                          
+`EducationSome high school:Income$35,000 to less than $50,000`                    
+`EducationHigh school graduate:Income$35,000 to less than $50,000`                
+`EducationSome college or technical school:Income$35,000 to less than $50,000`    
+`EducationCollege graduate:Income$35,000 to less than $50,000`                    
+`EducationElementary:Income$50,000 to less than $75,000`                          
+`EducationSome high school:Income$50,000 to less than $75,000`                    
+`EducationHigh school graduate:Income$50,000 to less than $75,000`                
+`EducationSome college or technical school:Income$50,000 to less than $75,000`    
+`EducationCollege graduate:Income$50,000 to less than $75,000`                    
+`EducationElementary:Income$75,000 or more`                                       
+`EducationSome high school:Income$75,000 or more`                                 
+`EducationHigh school graduate:Income$75,000 or more`                             
+`EducationSome college or technical school:Income$75,000 or more`                 
+`EducationCollege graduate:Income$75,000 or more`                                 
+`GenHlthVery good:Income$10,000 to less than $15,000`                             
+`GenHlthGood:Income$10,000 to less than $15,000`                                  
+`GenHlthFair:Income$10,000 to less than $15,000`                                  
+`GenHlthPoor:Income$10,000 to less than $15,000`                                  
+`GenHlthVery good:Income$15,000 to less than $20,000`                             
+`GenHlthGood:Income$15,000 to less than $20,000`                                  
+`GenHlthFair:Income$15,000 to less than $20,000`                                  
+`GenHlthPoor:Income$15,000 to less than $20,000`                                  
+`GenHlthVery good:Income$20,000 to less than $25,000`                             
+`GenHlthGood:Income$20,000 to less than $25,000`                                  
+`GenHlthFair:Income$20,000 to less than $25,000`                                  
+`GenHlthPoor:Income$20,000 to less than $25,000`                                  
+`GenHlthVery good:Income$25,000 to less than $35,000`                             
+`GenHlthGood:Income$25,000 to less than $35,000`                                  
+`GenHlthFair:Income$25,000 to less than $35,000`                                  
+`GenHlthPoor:Income$25,000 to less than $35,000`                               .  
+`GenHlthVery good:Income$35,000 to less than $50,000`                             
+`GenHlthGood:Income$35,000 to less than $50,000`                                  
+`GenHlthFair:Income$35,000 to less than $50,000`                                  
+`GenHlthPoor:Income$35,000 to less than $50,000`                                  
+`GenHlthVery good:Income$50,000 to less than $75,000`                             
+`GenHlthGood:Income$50,000 to less than $75,000`                               .  
+`GenHlthFair:Income$50,000 to less than $75,000`                                  
+`GenHlthPoor:Income$50,000 to less than $75,000`                               ** 
+`GenHlthVery good:Income$75,000 or more`                                          
+`GenHlthGood:Income$75,000 or more`                                            .  
+`GenHlthFair:Income$75,000 or more`                                            *  
+`GenHlthPoor:Income$75,000 or more`                                            ***
+`DiffWalkYes:Income$10,000 to less than $15,000`                                  
+`DiffWalkYes:Income$15,000 to less than $20,000`                                  
+`DiffWalkYes:Income$20,000 to less than $25,000`                                  
+`DiffWalkYes:Income$25,000 to less than $35,000`                                  
+`DiffWalkYes:Income$35,000 to less than $50,000`                                  
+`DiffWalkYes:Income$50,000 to less than $75,000`                                  
+`DiffWalkYes:Income$75,000 or more`                                            .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 137432  on 160631  degrees of freedom
+Residual deviance: 109594  on 160510  degrees of freedom
+AIC: 109838
+
+Number of Fisher Scoring iterations: 6</code></pre>
+</div>
+</div>
+</section>
+<section id="logistic-regression-model-3" class="level3">
+<h3 class="anchored" data-anchor-id="logistic-regression-model-3">Logistic regression Model 3</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>logistic_M3_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(Diabetes_binary <span class="sc">~</span> GenHlth <span class="sc">+</span> HighBP <span class="sc">+</span> DiffWalk <span class="sc">+</span> BMI <span class="sc">+</span> HighChol <span class="sc">+</span> Age <span class="sc">+</span> HeartDiseaseorAttack <span class="sc">+</span> PhysHlth <span class="sc">+</span> Income <span class="sc">+</span> PhysActivity, </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_transformed, </span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(logistic_M3_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+NULL
+
+Coefficients:
+                                      Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                          -5.234617   0.144651 -36.188  &lt; 2e-16 ***
+`GenHlthVery good`                    0.683478   0.040959  16.687  &lt; 2e-16 ***
+GenHlthGood                           1.339167   0.039815  33.634  &lt; 2e-16 ***
+GenHlthFair                           1.790920   0.042725  41.917  &lt; 2e-16 ***
+GenHlthPoor                           1.995284   0.050478  39.528  &lt; 2e-16 ***
+`HighBPHigh BP`                       0.725104   0.017594  41.213  &lt; 2e-16 ***
+DiffWalkYes                           0.147381   0.019887   7.411 1.26e-13 ***
+BMI                                   0.391388   0.007345  53.287  &lt; 2e-16 ***
+`HighCholHigh cholesterol`            0.515652   0.016270  31.693  &lt; 2e-16 ***
+`Age25-29`                            0.084288   0.172002   0.490  0.62411    
+`Age30-34`                            0.361591   0.154029   2.348  0.01890 *  
+`Age35-39`                            0.803504   0.145636   5.517 3.44e-08 ***
+`Age40-44`                            1.042469   0.142402   7.321 2.47e-13 ***
+`Age45-49`                            1.306890   0.140081   9.330  &lt; 2e-16 ***
+`Age50-54`                            1.566107   0.138593  11.300  &lt; 2e-16 ***
+`Age55-59`                            1.628011   0.138161  11.783  &lt; 2e-16 ***
+`Age60-64`                            1.826735   0.137859  13.251  &lt; 2e-16 ***
+`Age65-69`                            2.016503   0.137799  14.634  &lt; 2e-16 ***
+`Age70-74`                            2.061001   0.138202  14.913  &lt; 2e-16 ***
+`Age75-79`                            1.958773   0.139023  14.090  &lt; 2e-16 ***
+`Age80 or older`                      1.805589   0.139111  12.979  &lt; 2e-16 ***
+HeartDiseaseorAttackYes               0.308933   0.020759  14.882  &lt; 2e-16 ***
+PhysHlth                             -0.046655   0.008470  -5.508 3.62e-08 ***
+`Income$10,000 to less than $15,000`  0.010094   0.041932   0.241  0.80977    
+`Income$15,000 to less than $20,000` -0.002084   0.040344  -0.052  0.95880    
+`Income$20,000 to less than $25,000` -0.052766   0.039392  -1.340  0.18040    
+`Income$25,000 to less than $35,000` -0.115801   0.038681  -2.994  0.00276 ** 
+`Income$35,000 to less than $50,000` -0.200669   0.037790  -5.310 1.10e-07 ***
+`Income$50,000 to less than $75,000` -0.206609   0.037805  -5.465 4.63e-08 ***
+`Income$75,000 or more`              -0.271550   0.036627  -7.414 1.23e-13 ***
+PhysActivityYes                      -0.028233   0.016870  -1.674  0.09422 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 137432  on 160631  degrees of freedom
+Residual deviance: 110984  on 160601  degrees of freedom
+AIC: 111046
+
+Number of Fisher Scoring iterations: 6</code></pre>
+</div>
+</div>
+</section>
+<section id="models-comparison" class="level3">
+<h3 class="anchored" data-anchor-id="models-comparison">Models comparison</h3>
+<p>Obtain log-loss value for each model:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">#using logLoss  as our metric for logistic M1 model:</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co">#get predicted values corresponding to the probabilities that each observation in test data belongs to "Prediabetes or diabetes"</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>predicted_prob_M1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M1_fit,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="co">#convert variable Diabetes_binary from factor to numeric in order to use logLoss function</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M1 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_transformed<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes or diabetes"</span>),</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>                              predicted_prob_M1<span class="sc">$</span><span class="st">`</span><span class="at">Prediabetes or diabetes</span><span class="st">`</span>)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="co">#using logLoss  as our metric for logistic M2 model:</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>predicted_prob_M2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M2_fit,</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>                           <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M2 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_transformed<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes or diabetes"</span>),</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>                              predicted_prob_M2<span class="sc">$</span><span class="st">`</span><span class="at">Prediabetes or diabetes</span><span class="st">`</span>)</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a><span class="co">#using logLoss  as our metric for logistic M3 model:</span></span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>predicted_prob_M3 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M3_fit,</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>                           <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M3 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_transformed<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes or diabetes"</span>),</span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>                              predicted_prob_M3<span class="sc">$</span><span class="st">`</span><span class="at">Prediabetes or diabetes</span><span class="st">`</span>)</span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a><span class="co">#list of accuracy obtained from each logistic model</span></span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">log_loss_logistic_M1 =</span> log_loss_logistic_M1, <span class="at">log_loss_logistic_M2 =</span> log_loss_logistic_M2, <span class="at">log_loss_logistic_M3 =</span> log_loss_logistic_M3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$log_loss_logistic_M1
+[1] 0.3466268
+
+$log_loss_logistic_M2
+[1] 0.3462027
+
+$log_loss_logistic_M3
+[1] 0.3497698</code></pre>
+</div>
+</div>
+<p>From the result after using logLoss(), we can see that all 3 logistic models have similar log-loss values (between 0.34 to 0.35). Therefore, considering the complexity of models, model 3 could be chosen as the best model among these three models since it is the simplest model among them.</p>
+</section>
 </section>
 <section id="classification-tree" class="level2">
 <h2 class="anchored" data-anchor-id="classification-tree">Classification Tree</h2>

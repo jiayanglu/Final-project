@@ -43,6 +43,8 @@ The purpose of this EDA is to read in data from diabetes_binary_health_indicator
 #load packages needed
 library(tidyverse)
 library(ggplot2)
+library(caret)
+library(Metrics)
 ```
 
 ```{r}
@@ -94,7 +96,7 @@ data <- data_no_duplicates
 data$Diabetes_binary <- factor(
   data$Diabetes_binary, 
   levels = c(0,1), 
-  labels = c("Prediabetes or diabetes", "Diabetes")
+  labels = c("No diabetes", "Prediabetes or diabetes")
 )
 
 data$HighBP <- factor(
@@ -276,6 +278,5 @@ corrplot::corrplot(corr_matrix,
 ```
 
 From all the exploratory analysis above, we can see that there are variableshighly positively correlated with each other: PhysHlth and GenHlth, PhysHlth and DiffWalk, GenHlth and DiffWalk, Income and Education. There are variables  highly negativelycorrelated with each other: Income and GenHlth, Income and DiffWalk. Variables (GenHlth, HighBP, DiffWalk, BMI, HighChol, Age, HeartDiseaseorAttack, PhysHlth) are positively correlated (Freq over 0.1) with Diabetes_binary; variables (Income, Education, PhysActivity) are negatively correlated (Freq lower than -0.1) with Diabetes_binary.
-
 
 

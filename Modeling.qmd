@@ -2,11 +2,273 @@
 title: "Modeling"
 format: html
 editor: visual
+editor_options: 
+  chunk_output_type: console
 ---
+
+## Introduction
+
+```{r}
+#load packages needed
+library(tidyverse)
+library(ggplot2)
+library(caret)
+library(Metrics)
+```
+
+```{r}
+#read in csv data
+data_original <- read_csv('diabetes_binary_health_indicators_BRFSS2015.csv')
+str(data_original)
+```
+
+Next, we can check whether there are duplicated data in this dataset.
+
+```{r}
+deplicates <- data_original[duplicated(data_original), ]
+nrow(deplicates)
+#from the output, we see that there are 24206 duplicates
+
+#then we need to exclude data that are duplicated
+#dataset data is updated here
+data_no_duplicates <- data_original[!duplicated(data_original), ]
+nrow(data_no_duplicates)
+#from the output, there are total 229,474 rows in the updated dataset data
+```
+
+Now we want to convert numeric variables to factors according to previous sorted unique values for each variable.
+
+```{r}
+data <- data_no_duplicates
+
+data$Diabetes_binary <- factor(
+  data$Diabetes_binary, 
+  levels = c(0,1), 
+  labels = c("No diabetes", "Prediabetes or diabetes")
+)
+
+data$HighBP <- factor(
+  data$HighBP,
+  levels = c(0,1), 
+  labels = c("No high BP", "High BP")
+)
+
+data$HighChol <- factor(
+  data$HighChol,
+  levels = c(0,1), 
+  labels = c("No high cholesterol", "High cholesterol")
+)
+
+data$CholCheck <- factor(
+  data$CholCheck,
+  levels = c(0,1), 
+  labels = c("No cholesterol check", "Cholesterol check")
+)
+
+data$Smoker <- factor(
+  data$Smoker,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$Stroke <- factor(
+  data$Stroke,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$HeartDiseaseorAttack <- factor(
+  data$HeartDiseaseorAttack,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$PhysActivity <- factor(
+  data$PhysActivity,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$Fruits <- factor(
+  data$Fruits,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$Veggies <- factor(
+  data$Veggies,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$HvyAlcoholConsump <- factor(
+  data$HvyAlcoholConsump,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$AnyHealthcare <- factor(
+  data$AnyHealthcare,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$NoDocbcCost <- factor(
+  data$NoDocbcCost,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$GenHlth <- factor(
+  data$GenHlth,
+  levels = c(1, 2, 3, 4, 5), 
+  labels = c("Excellent", "Very good", "Good", "Fair", "Poor")
+)
+
+data$DiffWalk <- factor(
+  data$DiffWalk,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$Sex <- factor(
+  data$Sex,
+  levels = c(0,1), 
+  labels = c("Female", "Male")
+)
+
+data$Age <- factor(
+  data$Age,
+  levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13), 
+  labels = c("18-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "70-74", "75-79", "80 or older")
+)
+
+data$Education <- factor(
+  data$Education,
+  levels = c(1, 2, 3, 4, 5, 6), 
+  labels = c("Never attended school or only kindergarten", "Elementary", "Some high school", "High school graduate", "Some college or technical school", "College graduate")
+)
+
+data$Income <- factor(
+  data$Income,
+  levels = c(1, 2, 3, 4, 5, 6, 7, 8), 
+  labels = c("Less than $10,000", "$10,000 to less than $15,000", "$15,000 to less than $20,000", "$20,000 to less than $25,000", "$25,000 to less than $35,000", "$35,000 to less than $50,000", "$50,000 to less than $75,000", "$75,000 or more")
+)
+
+str(data)
+```
+
+## Split Data
+
+Split this data into a training and test set. Before modeling, let’s scale and centralized data.
+
+```{r}
+set.seed(11)
+
+
+trainIndex <- createDataPartition(data$Diabetes_binary, p = .7,
+                                  list = FALSE,
+                                  times = 1)
+
+train_data <-  data[trainIndex, ]
+test_data <- data[-trainIndex, ]
+
+#check the dimensions of our training data and testing data frame
+dim(train_data)
+dim(test_data)
+
+pre_proc_values <- preProcess(train_data, method = c("center", "scale"))
+
+#Scaling and centralizing train and test data sets.
+train_transformed <- predict(pre_proc_values, train_data)
+test_transformed <- predict(pre_proc_values, test_data)
+```
 
 ## Logistic Regression Models
 
+### Logistic regression Model 1
+
+```{r}
+set.seed(11)
+
+trctrl <- trainControl(method = "repeatedcv", number = 5, repeats = 3)
+
+logistic_M1_fit <- train(Diabetes_binary ~ ., 
+                         data = train_transformed, 
+                         method = "glm",
+                         family="binomial",
+                         trControl=trctrl)
+summary(logistic_M1_fit)
+```
+
+### Logistic regression Model 2
+
+```{r}
+set.seed(11)
+
+logistic_M2_fit <- train(Diabetes_binary ~ . - NoDocbcCost - Fruits - AnyHealthcare + PhysHlth:GenHlth + PhysHlth:DiffWalk + GenHlth:DiffWalk + Income:Education + Income:GenHlth + Income:DiffWalk,
+                         data = train_transformed, 
+                         method = "glm",
+                         family="binomial",
+                         trControl=trctrl)
+summary(logistic_M2_fit)
+```
+
+### Logistic regression Model 3
+
+```{r}
+set.seed(11)
+
+logistic_M3_fit <- train(Diabetes_binary ~ GenHlth + HighBP + DiffWalk + BMI + HighChol + Age + HeartDiseaseorAttack + PhysHlth + Income + PhysActivity, 
+                         data = train_transformed, 
+                         method = "glm",
+                         family="binomial",
+                         trControl=trctrl)
+summary(logistic_M3_fit)
+```
+
+### Models comparison
+
+Obtain log-loss value for each model:
+
+```{r}
+#using logLoss  as our metric for logistic M1 model:
+
+#get predicted values corresponding to the probabilities that each observation in test data belongs to "Prediabetes or diabetes"
+predicted_prob_M1 <- predict(logistic_M1_fit,
+                           newdata = select(test_transformed, -Diabetes_binary), type='prob')
+
+#convert variable Diabetes_binary from factor to numeric in order to use logLoss function
+log_loss_logistic_M1 <- logLoss(as.numeric(as.character(test_transformed$Diabetes_binary) == "Prediabetes or diabetes"),
+                              predicted_prob_M1$`Prediabetes or diabetes`)
+
+#using logLoss  as our metric for logistic M2 model:
+
+predicted_prob_M2 <- predict(logistic_M2_fit,
+                           newdata = select(test_transformed, -Diabetes_binary), type='prob')
+
+log_loss_logistic_M2 <- logLoss(as.numeric(as.character(test_transformed$Diabetes_binary) == "Prediabetes or diabetes"),
+                              predicted_prob_M2$`Prediabetes or diabetes`)
+
+#using logLoss  as our metric for logistic M3 model:
+
+predicted_prob_M3 <- predict(logistic_M3_fit,
+                           newdata = select(test_transformed, -Diabetes_binary), type='prob')
+
+log_loss_logistic_M3 <- logLoss(as.numeric(as.character(test_transformed$Diabetes_binary) == "Prediabetes or diabetes"),
+                              predicted_prob_M3$`Prediabetes or diabetes`)
+
+#list of accuracy obtained from each logistic model
+list(log_loss_logistic_M1 = log_loss_logistic_M1, log_loss_logistic_M2 = log_loss_logistic_M2, log_loss_logistic_M3 = log_loss_logistic_M3)
+```
+
+From the result after using logLoss(), we can see that all 3 logistic models have similar log-loss values (between 0.34 to 0.35). Therefore, considering the complexity of models, model 3 could be chosen as the best model among these three models since it is the simplest model among them.
+
 ## Classification Tree
+
+```{r}
+
+```
 
 ## Random Forest
 
