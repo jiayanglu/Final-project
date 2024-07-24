@@ -14,6 +14,9 @@ library(tidyverse)
 library(ggplot2)
 library(caret)
 library(Metrics)
+library(rpart)
+library(randomForest)
+library(ranger)
 ```
 
 ```{r}
@@ -165,7 +168,6 @@ Split this data into a training and test set. Before modeling, let’s scale and
 ```{r}
 set.seed(11)
 
-
 trainIndex <- createDataPartition(data$Diabetes_binary, p = .7,
                                   list = FALSE,
                                   times = 1)
@@ -191,7 +193,7 @@ test_transformed <- predict(pre_proc_values, test_data)
 ```{r}
 set.seed(11)
 
-trctrl <- trainControl(method = "repeatedcv", number = 5, repeats = 3)
+trctrl <- trainControl(method = "cv", number = 5)
 
 logistic_M1_fit <- train(Diabetes_binary ~ ., 
                          data = train_transformed, 
@@ -236,27 +238,27 @@ Obtain log-loss value for each model:
 
 #get predicted values corresponding to the probabilities that each observation in test data belongs to "Prediabetes or diabetes"
 predicted_prob_M1 <- predict(logistic_M1_fit,
-                           newdata = select(test_transformed, -Diabetes_binary), type='prob')
+                             newdata = select(test_transformed, -Diabetes_binary), type='prob')
 
 #convert variable Diabetes_binary from factor to numeric in order to use logLoss function
 log_loss_logistic_M1 <- logLoss(as.numeric(as.character(test_transformed$Diabetes_binary) == "Prediabetes or diabetes"),
-                              predicted_prob_M1$`Prediabetes or diabetes`)
+                                predicted_prob_M1$`Prediabetes or diabetes`)
 
 #using logLoss  as our metric for logistic M2 model:
 
 predicted_prob_M2 <- predict(logistic_M2_fit,
-                           newdata = select(test_transformed, -Diabetes_binary), type='prob')
+                             newdata = select(test_transformed, -Diabetes_binary), type='prob')
 
 log_loss_logistic_M2 <- logLoss(as.numeric(as.character(test_transformed$Diabetes_binary) == "Prediabetes or diabetes"),
-                              predicted_prob_M2$`Prediabetes or diabetes`)
+                                predicted_prob_M2$`Prediabetes or diabetes`)
 
 #using logLoss  as our metric for logistic M3 model:
 
 predicted_prob_M3 <- predict(logistic_M3_fit,
-                           newdata = select(test_transformed, -Diabetes_binary), type='prob')
+                             newdata = select(test_transformed, -Diabetes_binary), type='prob')
 
 log_loss_logistic_M3 <- logLoss(as.numeric(as.character(test_transformed$Diabetes_binary) == "Prediabetes or diabetes"),
-                              predicted_prob_M3$`Prediabetes or diabetes`)
+                                predicted_prob_M3$`Prediabetes or diabetes`)
 
 #list of accuracy obtained from each logistic model
 list(log_loss_logistic_M1 = log_loss_logistic_M1, log_loss_logistic_M2 = log_loss_logistic_M2, log_loss_logistic_M3 = log_loss_logistic_M3)
@@ -267,9 +269,67 @@ From the result after using logLoss(), we can see that all 3 logistic models hav
 ## Classification Tree
 
 ```{r}
+set.seed(11)
 
+#change the names of levels of response variable Diabetes_binary
+#use data_no_duplicates which only contain one factor variable as response
+data_2 <- data_no_duplicates
+
+data_2$Diabetes_binary <- factor(
+  data_2$Diabetes_binary, 
+  levels = c(0,1), 
+  labels = c("No_diabetes", "Prediabetes_or_diabetes")
+)
+
+#split data accordingly
+trainIndex_2 <- createDataPartition(data_2$Diabetes_binary, p = .7,
+                                  list = FALSE,
+                                  times = 1)
+
+train_data_2 <-  data_2[trainIndex_2, ]
+test_data_2 <- data_2[-trainIndex_2, ]
+
+#check the dimensions of our training data and testing data frame
+dim(train_data_2)
+dim(test_data_2)
+
+pre_proc_values_2 <- preProcess(train_data_2, method = c("center", "scale"))
+
+#Scaling and centralizing train and test data sets.
+train_transformed_2 <- predict(pre_proc_values_2, train_data_2)
+test_transformed_2 <- predict(pre_proc_values_2, test_data_2)
 ```
 
+Now, we can fit a classification tree with a grid of values for the complexity parameter (cp). cp is a tuning parameter used in CART (Classification and Regression Trees) to control the complexity of the decision tree model. It represents the cost of adding another predictor split to the tree. A larger cp value results in a simpler tree (fewer splits), while a smaller cp value allows the tree to be more complex (more splits).
+
+```{r}
+classification_fit <- train(Diabetes_binary ~ GenHlth + HighBP + DiffWalk + BMI + HighChol + Age + HeartDiseaseorAttack + PhysHlth + Income + PhysActivity,
+                            data = train_transformed_2,
+                            method = "rpart",
+                            metric = "logLoss",
+                            trControl = trainControl(method = "cv", 
+                                                     number = 5,
+                                                     classProbs = TRUE,
+                                                     summaryFunction = mnLogLoss),
+                            tuneGrid = expand.grid(cp = seq(0, 0.1, by = 0.001)))
+classification_fit
+```
+
+From the output, we can choose the cp value that minimizes the chosen metric (logLoss) on the validation set, which is cp = 0.001. This cp value represents the optimal balance between model complexity and performance.
+
 ## Random Forest
+
+```{r}
+set.seed(11)
+
+rf_fit <- train(Diabetes_binary ~ GenHlth + HighBP + DiffWalk + BMI + HighChol + Age + HeartDiseaseorAttack + PhysHlth + Income + PhysActivity,
+                data = train_transformed_2,
+                method = "rf",
+                metric = "logLoss",
+                trControl = trctrl,
+                tuneGrid = expand.grid(mtry = 1:sqrt(ncol(data)-1)))
+rf_fit
+```
+
 
 ## Final Model Selection
