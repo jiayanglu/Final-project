@@ -429,25 +429,25 @@ $Income
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Diabetes_binary <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>Diabetes_binary, </span>
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No diabetes"</span>, <span class="st">"Prediabetes or diabetes"</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No_diabetes"</span>, <span class="st">"Prediabetes_or_diabetes"</span>)</span>
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>HighBP <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
 <span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>HighBP,</span>
 <span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No high BP"</span>, <span class="st">"High BP"</span>)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No_high_BP"</span>, <span class="st">"High_BP"</span>)</span>
 <span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>HighChol <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
 <span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>HighChol,</span>
 <span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No high cholesterol"</span>, <span class="st">"High cholesterol"</span>)</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No_high_cholesterol"</span>, <span class="st">"High_cholesterol"</span>)</span>
 <span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>CholCheck <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
 <span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>CholCheck,</span>
 <span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), </span>
-<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No cholesterol check"</span>, <span class="st">"Cholesterol check"</span>)</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No_cholesterol_check"</span>, <span class="st">"Cholesterol_check"</span>)</span>
 <span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Smoker <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
@@ -525,28 +525,28 @@ $Income
 <span id="cb27-99"><a href="#cb27-99" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
 <span id="cb27-100"><a href="#cb27-100" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>Age,</span>
 <span id="cb27-101"><a href="#cb27-101" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">13</span>), </span>
-<span id="cb27-102"><a href="#cb27-102" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"18-24"</span>, <span class="st">"25-29"</span>, <span class="st">"30-34"</span>, <span class="st">"35-39"</span>, <span class="st">"40-44"</span>, <span class="st">"45-49"</span>, <span class="st">"50-54"</span>, <span class="st">"55-59"</span>, <span class="st">"60-64"</span>, <span class="st">"65-69"</span>, <span class="st">"70-74"</span>, <span class="st">"75-79"</span>, <span class="st">"80 or older"</span>)</span>
+<span id="cb27-102"><a href="#cb27-102" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"18-24"</span>, <span class="st">"25-29"</span>, <span class="st">"30-34"</span>, <span class="st">"35-39"</span>, <span class="st">"40-44"</span>, <span class="st">"45-49"</span>, <span class="st">"50-54"</span>, <span class="st">"55-59"</span>, <span class="st">"60-64"</span>, <span class="st">"65-69"</span>, <span class="st">"70-74"</span>, <span class="st">"75-79"</span>, <span class="st">"80_or_older"</span>)</span>
 <span id="cb27-103"><a href="#cb27-103" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb27-104"><a href="#cb27-104" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-105"><a href="#cb27-105" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Education <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
 <span id="cb27-106"><a href="#cb27-106" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>Education,</span>
 <span id="cb27-107"><a href="#cb27-107" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>), </span>
-<span id="cb27-108"><a href="#cb27-108" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Never attended school or only kindergarten"</span>, <span class="st">"Elementary"</span>, <span class="st">"Some high school"</span>, <span class="st">"High school graduate"</span>, <span class="st">"Some college or technical school"</span>, <span class="st">"College graduate"</span>)</span>
+<span id="cb27-108"><a href="#cb27-108" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Never_attended_school_or_only_kindergarten"</span>, <span class="st">"Elementary"</span>, <span class="st">"Some_high_school"</span>, <span class="st">"High school_graduate"</span>, <span class="st">"Some_college_or_technical_school"</span>, <span class="st">"College_graduate"</span>)</span>
 <span id="cb27-109"><a href="#cb27-109" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb27-110"><a href="#cb27-110" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-111"><a href="#cb27-111" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Income <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
 <span id="cb27-112"><a href="#cb27-112" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>Income,</span>
 <span id="cb27-113"><a href="#cb27-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>), </span>
-<span id="cb27-114"><a href="#cb27-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Less than $10,000"</span>, <span class="st">"$10,000 to less than $15,000"</span>, <span class="st">"$15,000 to less than $20,000"</span>, <span class="st">"$20,000 to less than $25,000"</span>, <span class="st">"$25,000 to less than $35,000"</span>, <span class="st">"$35,000 to less than $50,000"</span>, <span class="st">"$50,000 to less than $75,000"</span>, <span class="st">"$75,000 or more"</span>)</span>
+<span id="cb27-114"><a href="#cb27-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Less_than_10K"</span>, <span class="st">"10K_to_less_than_15K"</span>, <span class="st">"15K_to_Less_than_20K"</span>, <span class="st">"20K_to_less_than_25K"</span>, <span class="st">"25K_to_less_than_35K"</span>, <span class="st">"35K_to_less_than_50k"</span>, <span class="st">"50k_to_less_than_75k"</span>, <span class="st">"75k_or_more"</span>)</span>
 <span id="cb27-115"><a href="#cb27-115" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb27-116"><a href="#cb27-116" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-117"><a href="#cb27-117" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>tibble [229,474 × 22] (S3: tbl_df/tbl/data.frame)
- $ Diabetes_binary     : Factor w/ 2 levels "No diabetes",..: 1 1 1 1 1 1 1 1 2 1 ...
- $ HighBP              : Factor w/ 2 levels "No high BP","High BP": 2 1 2 2 2 2 2 2 2 1 ...
- $ HighChol            : Factor w/ 2 levels "No high cholesterol",..: 2 1 2 1 2 2 1 2 2 1 ...
- $ CholCheck           : Factor w/ 2 levels "No cholesterol check",..: 2 1 2 2 2 2 2 2 2 2 ...
+ $ Diabetes_binary     : Factor w/ 2 levels "No_diabetes",..: 1 1 1 1 1 1 1 1 2 1 ...
+ $ HighBP              : Factor w/ 2 levels "No_high_BP","High_BP": 2 1 2 2 2 2 2 2 2 1 ...
+ $ HighChol            : Factor w/ 2 levels "No_high_cholesterol",..: 2 1 2 1 2 2 1 2 2 1 ...
+ $ CholCheck           : Factor w/ 2 levels "No_cholesterol_check",..: 2 1 2 2 2 2 2 2 2 2 ...
  $ BMI                 : num [1:229474] 40 25 28 27 24 25 30 25 30 24 ...
  $ Smoker              : Factor w/ 2 levels "No","Yes": 2 2 1 1 1 2 2 2 2 1 ...
  $ Stroke              : Factor w/ 2 levels "No","Yes": 1 1 1 1 1 1 1 1 1 1 ...
@@ -563,8 +563,8 @@ $Income
  $ DiffWalk            : Factor w/ 2 levels "No","Yes": 2 1 2 1 1 1 1 2 2 1 ...
  $ Sex                 : Factor w/ 2 levels "Female","Male": 1 1 1 1 1 2 1 1 1 2 ...
  $ Age                 : Factor w/ 13 levels "18-24","25-29",..: 9 7 9 11 11 10 9 11 9 8 ...
- $ Education           : Factor w/ 6 levels "Never attended school or only kindergarten",..: 4 6 4 3 5 6 6 4 5 4 ...
- $ Income              : Factor w/ 8 levels "Less than $10,000",..: 3 1 8 6 4 8 7 4 1 3 ...</code></pre>
+ $ Education           : Factor w/ 6 levels "Never_attended_school_or_only_kindergarten",..: 4 6 4 3 5 6 6 4 5 4 ...
+ $ Income              : Factor w/ 8 levels "Less_than_10K",..: 3 1 8 6 4 8 7 4 1 3 ...</code></pre>
 </div>
 </div>
 </section>
