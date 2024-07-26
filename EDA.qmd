@@ -6,6 +6,10 @@ editor_options:
   chunk_output_type: console
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
 ## Introduction section
 
 The dataset, diabetes_binary_health_indicators_BRFSS2015.csv, is a clean dataset of 253,680 survey responses to the CDC's BRFSS2015. The target variable Diabetes_binary has 2 classes. 0 is for no diabetes, and 1 is for prediabetes or diabetes. This dataset has 21 other feature variables and is not balanced.
@@ -277,3 +281,5 @@ corrplot::corrplot(corr_matrix,
 ```
 
 From all the exploratory analysis above, we can see that there are variableshighly positively correlated with each other: PhysHlth and GenHlth, PhysHlth and DiffWalk, GenHlth and DiffWalk, Income and Education. There are variables highly negativelycorrelated with each other: Income and GenHlth, Income and DiffWalk. Variables (GenHlth, HighBP, DiffWalk, BMI, HighChol, Age, HeartDiseaseorAttack, PhysHlth) are positively correlated (Freq over 0.1) with Diabetes_binary; variables (Income, Education, PhysActivity) are negatively correlated (Freq lower than -0.1) with Diabetes_binary.
+
+\[[Click here for the Modeling Page](Modeling.html)\] (Modeling.html)

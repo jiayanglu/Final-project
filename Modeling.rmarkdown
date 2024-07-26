@@ -10,7 +10,9 @@ editor_options:
 knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 ```
 
+
 ## Introduction
+
 
 ```{r}
 #load packages needed
@@ -27,7 +29,9 @@ data_original <- read_csv('diabetes_binary_health_indicators_BRFSS2015.csv')
 str(data_original)
 ```
 
+
 Next, we can check whether there are duplicated data in this dataset.
+
 
 ```{r}
 deplicates <- data_original[duplicated(data_original), ]
@@ -41,7 +45,9 @@ nrow(data_no_duplicates)
 #from the output, there are total 229,474 rows in the updated dataset data
 ```
 
+
 Now we want to convert numeric variables to factors according to previous sorted unique values for each variable.
+
 
 ```{r}
 data <- data_no_duplicates
@@ -163,9 +169,11 @@ data$Income <- factor(
 str(data)
 ```
 
+
 ## Split Data
 
 Split this data into a training and test set. Before modeling, let’s scale and centralized data.
+
 
 ```{r}
 set.seed(11)
@@ -182,11 +190,13 @@ dim(train_data)
 dim(test_data)
 ```
 
+
 ## Logistic Regression Models
 
 I use preprocessed data (train_transformed) as my train data here in logistic regression models.
 
 ### Logistic regression Model 1
+
 
 ```{r}
 set.seed(11)
@@ -200,7 +210,9 @@ logistic_M1_fit <- train(Diabetes_binary ~ .,
                          trControl=trctrl)
 ```
 
+
 ### Logistic regression Model 2
+
 
 ```{r}
 set.seed(11)
@@ -212,7 +224,9 @@ logistic_M2_fit <- train(Diabetes_binary ~ . - NoDocbcCost - Fruits - AnyHealthc
                          trControl=trctrl)
 ```
 
+
 ### Logistic regression Model 3
+
 
 ```{r}
 set.seed(11)
@@ -224,9 +238,11 @@ logistic_M3_fit <- train(Diabetes_binary ~ GenHlth + HighBP + DiffWalk + BMI + H
                          trControl=trctrl)
 ```
 
+
 ### Models comparison
 
 Obtain log-loss value for each model:
+
 
 ```{r}
 #use logLoss as our metric for logistic M1 model:
@@ -258,6 +274,7 @@ log_loss_logistic_M3 <- logLoss(as.numeric(as.character(test_data$Diabetes_binar
 list(log_loss_logistic_M1 = log_loss_logistic_M1, log_loss_logistic_M2 = log_loss_logistic_M2, log_loss_logistic_M3 = log_loss_logistic_M3)
 ```
 
+
 From the result after using logLoss(), we can see that all 3 logistic models have similar log-loss values (between 0.34 to 0.35) when using training data. Therefore, considering the complexity of models, logistic_M3_fit could be chosen as the best model among these three models since it is the simplest model among them.
 
 ## Classification Tree
@@ -265,6 +282,7 @@ From the result after using logLoss(), we can see that all 3 logistic models hav
 We do not need to use preprocessed data for tree modeling. Therefore, I use train data without preprocessing here.
 
 Now, we can fit a classification tree with a grid of values for the complexity parameter (cp). cp is a tuning parameter used in CART (Classification and Regression Trees) to control the complexity of the decision tree model. It represents the cost of adding another predictor split to the tree. A larger cp value results in a simpler tree (fewer splits), while a smaller cp value allows the tree to be more complex (more splits).
+
 
 ```{r}
 set.seed(11)
@@ -281,9 +299,11 @@ classification_fit <- train(Diabetes_binary ~ .,
 classification_fit
 ```
 
+
 From the output, we can see that the cp value that minimizes the chosen metric (logLoss) on the training set is 0.001. This cp value represents the optimal balance between model complexity and performance. The logLoss value at cp = 0.001 is 0.3821432.
 
 ## Random Forest
+
 
 ```{r}
 set.seed(11)
@@ -303,9 +323,11 @@ rf_fit <- train(Diabetes_binary ~ .,
 rf_fit
 ```
 
+
 From the output, we can see that the best tuning parameters to minimizes the chosen metric (logLoss) on the training set are mtry=4, splitrule = extratrees, and min.node.size = 100. The logLoss value at mtry=4, splitrule = extratrees, and min.node.size = 100 is 0.3492082.
 
 ## Final Model Selection
+
 
 ```{r}
 #use logLoss as our metric for classification model:
@@ -331,4 +353,6 @@ list(log_loss_logistic_M3 = log_loss_logistic_M3,
      log_loss_rf = log_loss_rf)
 ```
 
+
 From the result, we can see that our logistic_M3 has the lowest log-loss value (0.3497698) among all the models, which means that the logistic_M3's predicted probabilities are closest to the actual observed outcomes among all models. Therefore, the logistic_M3 model overall did the best job (in terms of log-loss metric) on the test set.
+
