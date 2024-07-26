@@ -1,0 +1,353 @@
+---
+title: "Modeling"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+
+## Introduction
+
+
+```{r}
+#load packages needed
+library(tidyverse)
+library(caret)
+library(Metrics)
+library(rpart)
+library(ranger)
+```
+
+```{r}
+#read in csv data
+data_original <- read_csv('diabetes_binary_health_indicators_BRFSS2015.csv')
+str(data_original)
+```
+
+
+Next, we can check whether there are duplicated data in this dataset.
+
+
+```{r}
+deplicates <- data_original[duplicated(data_original), ]
+nrow(deplicates)
+#from the output, we see that there are 24206 duplicates
+
+#then we need to exclude data that are duplicated
+#dataset data is updated here
+data_no_duplicates <- data_original[!duplicated(data_original), ]
+nrow(data_no_duplicates)
+#from the output, there are total 229,474 rows in the updated dataset data
+```
+
+
+Now we want to convert numeric variables to factors according to previous sorted unique values for each variable.
+
+
+```{r}
+data <- data_no_duplicates
+
+data$Diabetes_binary <- factor(
+  data$Diabetes_binary, 
+  levels = c(0,1), 
+  labels = c("No_diabetes", "Prediabetes_or_diabetes")
+)
+
+data$HighBP <- factor(
+  data$HighBP,
+  levels = c(0,1), 
+  labels = c("No_high_BP", "High_BP")
+)
+
+data$HighChol <- factor(
+  data$HighChol,
+  levels = c(0,1), 
+  labels = c("No_high_cholesterol", "High_cholesterol")
+)
+
+data$CholCheck <- factor(
+  data$CholCheck,
+  levels = c(0,1), 
+  labels = c("No_cholesterol_check", "Cholesterol_check")
+)
+
+data$Smoker <- factor(
+  data$Smoker,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$Stroke <- factor(
+  data$Stroke,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$HeartDiseaseorAttack <- factor(
+  data$HeartDiseaseorAttack,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$PhysActivity <- factor(
+  data$PhysActivity,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$Fruits <- factor(
+  data$Fruits,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$Veggies <- factor(
+  data$Veggies,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$HvyAlcoholConsump <- factor(
+  data$HvyAlcoholConsump,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$AnyHealthcare <- factor(
+  data$AnyHealthcare,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$NoDocbcCost <- factor(
+  data$NoDocbcCost,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$GenHlth <- factor(
+  data$GenHlth,
+  levels = c(1, 2, 3, 4, 5), 
+  labels = c("Excellent", "Very_good", "Good", "Fair", "Poor")
+)
+
+data$DiffWalk <- factor(
+  data$DiffWalk,
+  levels = c(0,1), 
+  labels = c("No", "Yes")
+)
+
+data$Sex <- factor(
+  data$Sex,
+  levels = c(0,1), 
+  labels = c("Female", "Male")
+)
+
+data$Age <- factor(
+  data$Age,
+  levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13), 
+  labels = c("18-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "70-74", "75-79", "80_or_older")
+)
+
+data$Education <- factor(
+  data$Education,
+  levels = c(1, 2, 3, 4, 5, 6), 
+  labels = c("Never_attended_school_or_only_kindergarten", "Elementary", "Some_high_school", "High school_graduate", "Some_college_or_technical_school", "College_graduate")
+)
+
+data$Income <- factor(
+  data$Income,
+  levels = c(1, 2, 3, 4, 5, 6, 7, 8), 
+  labels = c("Less_than_10K", "10K_to_less_than_15K", "15K_to_Less_than_20K", "20K_to_less_than_25K", "25K_to_less_than_35K", "35K_to_less_than_50k", "50k_to_less_than_75k", "75k_or_more")
+)
+
+str(data)
+```
+
+
+## Split Data
+
+Split this data into a training and test set. Before modeling, let’s scale and centralized data.
+
+
+```{r}
+set.seed(11)
+
+trainIndex <- createDataPartition(data$Diabetes_binary, p = .7,
+                                  list = FALSE,
+                                  times = 1)
+
+train_data <-  data[trainIndex, ]
+test_data <- data[-trainIndex, ]
+
+#check the dimensions of our training data and testing data frame
+dim(train_data)
+dim(test_data)
+```
+
+
+## Logistic Regression Models
+
+I use preprocessed data (train_transformed) as my train data here in logistic regression models.
+
+### Logistic regression Model 1
+
+
+```{r}
+set.seed(11)
+
+trctrl <- trainControl(method = "cv", number = 5)
+
+logistic_M1_fit <- train(Diabetes_binary ~ ., 
+                         data = train_data, 
+                         method = "glm",
+                         family="binomial",
+                         trControl=trctrl)
+```
+
+
+### Logistic regression Model 2
+
+
+```{r}
+set.seed(11)
+
+logistic_M2_fit <- train(Diabetes_binary ~ . - NoDocbcCost - Fruits - AnyHealthcare + PhysHlth:GenHlth + PhysHlth:DiffWalk + GenHlth:DiffWalk + Income:Education + Income:GenHlth + Income:DiffWalk,
+                         data = train_data, 
+                         method = "glm",
+                         family="binomial",
+                         trControl=trctrl)
+```
+
+
+### Logistic regression Model 3
+
+
+```{r}
+set.seed(11)
+
+logistic_M3_fit <- train(Diabetes_binary ~ GenHlth + HighBP + DiffWalk + BMI + HighChol + Age + HeartDiseaseorAttack + PhysHlth + Income + PhysActivity, 
+                         data = train_data, 
+                         method = "glm",
+                         family="binomial",
+                         trControl=trctrl)
+```
+
+
+### Models comparison
+
+Obtain log-loss value for each model:
+
+
+```{r}
+#use logLoss as our metric for logistic M1 model:
+#get predicted values corresponding to the probabilities that each observation in test data belongs to "Prediabetes_or_diabetes"
+predicted_prob_M1 <- predict(logistic_M1_fit,
+                             newdata = select(test_data, -Diabetes_binary), type='prob')
+
+#convert variable Diabetes_binary from factor to numeric in order to use logLoss function
+log_loss_logistic_M1 <- logLoss(as.numeric(as.character(test_data$Diabetes_binary) == "Prediabetes_or_diabetes"),
+                                predicted_prob_M1$Prediabetes_or_diabetes)
+
+#use logLoss  as our metric for logistic M2 model:
+
+predicted_prob_M2 <- predict(logistic_M2_fit,
+                             newdata = select(test_data, -Diabetes_binary), type='prob')
+
+log_loss_logistic_M2 <- logLoss(as.numeric(as.character(test_data$Diabetes_binary) == "Prediabetes_or_diabetes"),
+                                predicted_prob_M2$Prediabetes_or_diabetes)
+
+#use logLoss as our metric for logistic M3 model:
+
+predicted_prob_M3 <- predict(logistic_M3_fit,
+                             newdata = select(test_data, -Diabetes_binary), type='prob')
+
+log_loss_logistic_M3 <- logLoss(as.numeric(as.character(test_data$Diabetes_binary) == "Prediabetes_or_diabetes"),
+                                predicted_prob_M3$Prediabetes_or_diabetes)
+
+#list of log-loss values obtained from each logistic model
+list(log_loss_logistic_M1 = log_loss_logistic_M1, log_loss_logistic_M2 = log_loss_logistic_M2, log_loss_logistic_M3 = log_loss_logistic_M3)
+```
+
+
+From the result after using logLoss(), we can see that all 3 logistic models have similar log-loss values (between 0.34 to 0.35) when using training data. Therefore, considering the complexity of models, logistic_M3_fit could be chosen as the best model among these three models since it is the simplest model among them.
+
+## Classification Tree
+
+We do not need to use preprocessed data for tree modeling. Therefore, I use train data without preprocessing here.
+
+Now, we can fit a classification tree with a grid of values for the complexity parameter (cp). cp is a tuning parameter used in CART (Classification and Regression Trees) to control the complexity of the decision tree model. It represents the cost of adding another predictor split to the tree. A larger cp value results in a simpler tree (fewer splits), while a smaller cp value allows the tree to be more complex (more splits).
+
+
+```{r}
+set.seed(11)
+
+classification_fit <- train(Diabetes_binary ~ .,
+                            data = train_data,
+                            method = "rpart",
+                            metric = "logLoss",
+                            trControl = trainControl(method = "cv", 
+                                                     number = 5,
+                                                     classProbs = TRUE,
+                                                     summaryFunction = mnLogLoss),
+                            tuneGrid = expand.grid(cp = seq(0, 0.1, by = 0.001)))
+classification_fit
+```
+
+
+From the output, we can see that the cp value that minimizes the chosen metric (logLoss) on the training set is 0.001. This cp value represents the optimal balance between model complexity and performance. The logLoss value at cp = 0.001 is 0.3821432. 
+
+## Random Forest
+
+
+```{r}
+set.seed(11)
+
+rf_fit <- train(Diabetes_binary ~ .,
+                data = train_data,
+                method = "ranger",
+                metric = "logLoss",
+                num.trees = 100,
+                trControl = trainControl(method = "cv", 
+                                         number = 3,
+                                         classProbs = TRUE,
+                                         summaryFunction = mnLogLoss),
+                tuneGrid = expand.grid(mtry = 1:sqrt(ncol(train_data)-1),
+                                       splitrule = "extratrees",
+                                       min.node.size = 100))
+rf_fit
+```
+
+
+From the output, we can see that the best tuning parameters to minimizes the chosen metric (logLoss) on the training set are mtry=4, splitrule = extratrees, and min.node.size = 100. The logLoss value at mtry=4, splitrule = extratrees, and min.node.size = 100 is 0.3492082. 
+
+## Final Model Selection
+
+
+```{r}
+#use logLoss as our metric for classification model:
+#get predicted values corresponding to the probabilities that each observation in test data belongs to "Prediabetes_or_diabetes"
+predicted_prob_classification <- predict(classification_fit,
+                                         newdata = select(test_data, -Diabetes_binary),
+                                         type='prob')
+#convert variable Diabetes_binary from factor to numeric in order to use logLoss function
+log_loss_classification <- logLoss(as.numeric(as.character(test_data$Diabetes_binary) == "Prediabetes_or_diabetes"),
+                                   predicted_prob_classification$Prediabetes_or_diabetes)
+
+#use logLoss as our metric for classification model:
+predicted_prob_rf <- predict(rf_fit,
+                             newdata = select(test_data, -Diabetes_binary),
+                             type='prob')
+#convert variable Diabetes_binary from factor to numeric in order to use logLoss function
+log_loss_rf <- logLoss(as.numeric(as.character(test_data$Diabetes_binary) == "Prediabetes_or_diabetes"),
+                       predicted_prob_rf$Prediabetes_or_diabetes)
+
+#list of log-loss values obtained from each model
+list(log_loss_logistic_M3 = log_loss_logistic_M3,
+     log_loss_classification = log_loss_classification,
+     log_loss_rf = log_loss_rf)
+```
+
+
+From the result, we can see that our logistic_M3 has the lowest log-loss value (0.3497698) among all the models, which means that the logistic_M3's predicted probabilities are closest to the actual observed outcomes among all models. Therefore, the logistic_M3 model overall did the best job (in terms of log-loss metric) on the test set.
