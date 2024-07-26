@@ -252,7 +252,7 @@ fun_API(GenHlth = "Fair",
 function() {
   list(
     name = "Jia Lu",
-    github_pages_url = ""
+    github_pages_url = "https://jiayanglu.github.io/Final-project/"
   )
 }
 

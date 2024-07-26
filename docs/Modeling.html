@@ -135,6 +135,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>In this document, we will dive into the process of creating and evaluating predictive models for our dataset. Modeling is a crucial step in data analysis, where we apply various statistical and machine learning techniques to build models that can make predictions or understand patterns in the data. This document includes code for data preparation, model building, model evaluation, and final conclusion.</p>
+<p>We will use logLoss as our metric to evaluate our models here. Log loss, or logistic loss, is a metric that measures the performance of classification models by evaluating how well predicted probabilities match with actual outcomes. Unlike accuracy, which only counts the number of correct predictions, log loss penalizes incorrect predictions more if they are made with high confidence. This makes it particularly useful for binary classification tasks because it gives a more clear picture of how reliable the model’s probability estimates are. It helps to ensure that the model not only predicts correctly but also assigns accurate probabilities to its predictions.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load packages needed</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -389,7 +391,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="logistic-regression-models" class="level2">
 <h2 class="anchored" data-anchor-id="logistic-regression-models">Logistic Regression Models</h2>
-<p>I use preprocessed data (train_transformed) as my train data here in logistic regression models.</p>
+<p>Logistic regression is a statistical method used to predict the probability of a binary outcome. Unlike linear regression, which predicts a continuous value, logistic regression gives a probability between 0 and 1 by using a logistic function. It’s useful for binary classification tasks because it not only tells us if an event is likely to happen but also how confident we are about that prediction. This makes it a popular choice for problems where we need to understand and predict categorical outcomes based on input features. Here, we can fit logistic regression models since we have a binary classification task.</p>
 <section id="logistic-regression-model-1" class="level3">
 <h3 class="anchored" data-anchor-id="logistic-regression-model-1">Logistic regression Model 1</h3>
 <div class="cell">
@@ -475,8 +477,8 @@ $log_loss_logistic_M3
 </section>
 <section id="classification-tree" class="level2">
 <h2 class="anchored" data-anchor-id="classification-tree">Classification Tree</h2>
-<p>We do not need to use preprocessed data for tree modeling. Therefore, I use train data without preprocessing here.</p>
-<p>Now, we can fit a classification tree with a grid of values for the complexity parameter (cp). cp is a tuning parameter used in CART (Classification and Regression Trees) to control the complexity of the decision tree model. It represents the cost of adding another predictor split to the tree. A larger cp value results in a simpler tree (fewer splits), while a smaller cp value allows the tree to be more complex (more splits).</p>
+<p>A classification tree model is a type of decision tree used to categorize data into distinct classes. It splits data into branches based on feature values, with each branch representing a decision rule that leads to a classification outcome. The process continues until each branch ends in a leaf node that predicts the final class. Classification trees are particularly useful for predicting categorical responses because they provide a clear, rule-based structure that helps in understanding how different features influence the outcome. This interpretability and ability to handle various types of input data make classification trees a valuable tool for tasks where predicting categorical outcomes is essential.</p>
+<p>Here, we can fit a classification tree since we have a binary classification task. I fit a classification tree with a grid of values for the complexity parameter (cp). cp is a tuning parameter used in CART (Classification and Regression Trees) to control the complexity of the decision tree model. It represents the cost of adding another predictor split to the tree. A larger cp value results in a simpler tree (fewer splits), while a smaller cp value allows the tree to be more complex (more splits).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -613,6 +615,7 @@ The final value used for the model was cp = 0.001.</code></pre>
 </section>
 <section id="random-forest" class="level2">
 <h2 class="anchored" data-anchor-id="random-forest">Random Forest</h2>
+<p>A random forest is an ensemble learning method that combines multiple decision trees to improve prediction accuracy and robustness. Instead of relying on a single classification tree, a random forest builds many trees using random subsets of the data and features. Each tree makes its own prediction, and the final outcome is determined by averaging the results (for regression) or by majority vote (for classification). This approach reduces overfitting and increases reliability compared to a single classification tree, making random forests especially useful when dealing with complex data and needing more stable, accurate predictions. This is why I use it here for a large complex data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
