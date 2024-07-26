@@ -137,6 +137,7 @@ train_data <-  data[trainIndex, ]
 test_data <- data[-trainIndex, ]
 
 #Our best model: Logistic regression Model 3
+trctrl <- trainControl(method = "cv", number = 5)
 
 logistic_M3_fit <- train(Diabetes_binary ~ GenHlth + HighBP + DiffWalk + BMI + HighChol + Age + HeartDiseaseorAttack + PhysHlth + Income + PhysActivity, 
                          data = train_data, 
@@ -205,6 +206,8 @@ fun_API <- function(GenHlth = default_values$GenHlth,
   return(predictions)
 }
 
+#http://localhost:8000/pred
+
 fun_API(GenHlth = "Poor",
         HighBP = "High_BP",
         DiffWalk = "Yes",
@@ -216,6 +219,7 @@ fun_API(GenHlth = "Poor",
         Income = "Less_than_10K",
         PhysActivity = "No") 
 
+#http://localhost:8000/pred?GenHlth=Poor&HighBP=High_BP&DiffWalk=Yes&BMI=100&HighChol=High_cholesterol&Age=80_or_older&HeartDiseaseorAttack=Yes&PhysHlth=30&Income=Less_than_10K&PhysActivity=No
 
 fun_API(GenHlth = "Excellent",
         HighBP = "No_high_BP",
@@ -228,6 +232,7 @@ fun_API(GenHlth = "Excellent",
         Income = "75k_or_more",
         PhysActivity = "Yes") 
 
+#http://localhost:8000/pred?GenHlth=Excellent&HighBP=No_high_BP&DiffWalk=No&BMI=20&HighChol=No_high_cholesterol&Age=18-24&HeartDiseaseorAttack=No&PhysHlth=0&Income=75k_or_more&PhysActivity=Yes
 
 fun_API(GenHlth = "Fair",
         HighBP = "High_BP",
@@ -240,8 +245,7 @@ fun_API(GenHlth = "Fair",
         Income = "50k_to_less_than_75k",
         PhysActivity = "No")
 
-#http://localhost:PORT/pred
-
+#http://localhost:8000/pred?GenHlth=Fair&HighBP=High_BP&DiffWalk=Yes&BMI=30&HighChol=High_cholesterol&Age=65-69&HeartDiseaseorAttack=Yes&PhysHlth=7&Income=50k_to_less_than_75k&PhysActivity=No
 
 #* Information about the API
 #* @get /info
@@ -252,4 +256,4 @@ function() {
   )
 }
 
-#http://localhost:PORT/info
+#http://localhost:8000/info

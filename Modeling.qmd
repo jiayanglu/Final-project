@@ -277,7 +277,7 @@ classification_fit <- train(Diabetes_binary ~ .,
 classification_fit
 ```
 
-From the output, we can see that the cp value that minimizes the chosen metric (logLoss) on the training set is 0.001. This cp value represents the optimal balance between model complexity and performance. The logLoss value at cp = 0.001 is 0.3821432. 
+From the output, we can see that the cp value that minimizes the chosen metric (logLoss) on the training set is 0.001. This cp value represents the optimal balance between model complexity and performance. The logLoss value at cp = 0.001 is 0.3821432.
 
 ## Random Forest
 
@@ -299,7 +299,7 @@ rf_fit <- train(Diabetes_binary ~ .,
 rf_fit
 ```
 
-From the output, we can see that the best tuning parameters to minimizes the chosen metric (logLoss) on the training set are mtry=4, splitrule = extratrees, and min.node.size = 100. The logLoss value at mtry=4, splitrule = extratrees, and min.node.size = 100 is 0.3492082. 
+From the output, we can see that the best tuning parameters to minimizes the chosen metric (logLoss) on the training set are mtry=4, splitrule = extratrees, and min.node.size = 100. The logLoss value at mtry=4, splitrule = extratrees, and min.node.size = 100 is 0.3492082.
 
 ## Final Model Selection
 
