@@ -27,8 +27,8 @@ Information for all the columns are listed below according to codebook15_llcp (l
 - AnyHealthcare: Have any kind of health care coverage, including health insurance, prepaid plans such as HMO, etc. 0 = no; 1 = yes
 - NoDocbcCost: Was there a time in the past 12 months when you needed to see a doctor but could not because of cost? 0 = no; 1 = yes
 - GenHlth: Would you say that in general your health is: scale 1-5. 1 = excellent; 2 = very good; 3 = good; 4 = fair; 5 = poor
-- MentHlth: days of poor mental health. scale 1-30 days
-- PhysHlth: physical illness or injury days in past 30 days. scale 1-30
+- MentHlth: days of poor mental health. scale 0-30 days
+- PhysHlth: physical illness or injury days in the past 30 days. scale 0-30 days
 - DiffWalk: Do you have serious difficulty walking or climbing stairs? 0 = no; 1 = yes
 - Sex: 0 = female; 1 = male
 - Age: 13-level age category (_AGEG5YR see codebook) 1 = 18-24; 9 = 60-64; 13 = 80 or older
@@ -44,7 +44,6 @@ The purpose of this EDA is to read in data from diabetes_binary_health_indicator
 library(tidyverse)
 library(ggplot2)
 library(caret)
-library(Metrics)
 ```
 
 ```{r}
@@ -174,7 +173,7 @@ data$NoDocbcCost <- factor(
 data$GenHlth <- factor(
   data$GenHlth,
   levels = c(1, 2, 3, 4, 5), 
-  labels = c("Excellent", "Very good", "Good", "Fair", "Poor")
+  labels = c("Excellent", "Very_good", "Good", "Fair", "Poor")
 )
 
 data$DiffWalk <- factor(

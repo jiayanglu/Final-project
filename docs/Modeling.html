@@ -159,8 +159,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: package 'caret' was built under R version 4.3.3</code></pre>
 </div>
@@ -362,7 +361,7 @@ dbl (22): Diabetes_binary, HighBP, HighChol, CholCheck, BMI, Smoker, Stroke,...
 <span id="cb25-81"><a href="#cb25-81" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>GenHlth <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
 <span id="cb25-82"><a href="#cb25-82" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>GenHlth,</span>
 <span id="cb25-83"><a href="#cb25-83" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>), </span>
-<span id="cb25-84"><a href="#cb25-84" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Excellent"</span>, <span class="st">"Very good"</span>, <span class="st">"Good"</span>, <span class="st">"Fair"</span>, <span class="st">"Poor"</span>)</span>
+<span id="cb25-84"><a href="#cb25-84" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Excellent"</span>, <span class="st">"Very_good"</span>, <span class="st">"Good"</span>, <span class="st">"Fair"</span>, <span class="st">"Poor"</span>)</span>
 <span id="cb25-85"><a href="#cb25-85" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb25-86"><a href="#cb25-86" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-87"><a href="#cb25-87" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>DiffWalk <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
@@ -412,7 +411,7 @@ dbl (22): Diabetes_binary, HighBP, HighChol, CholCheck, BMI, Smoker, Stroke,...
  $ HvyAlcoholConsump   : Factor w/ 2 levels "No","Yes": 1 1 1 1 1 1 1 1 1 1 ...
  $ AnyHealthcare       : Factor w/ 2 levels "No","Yes": 2 1 2 2 2 2 2 2 2 2 ...
  $ NoDocbcCost         : Factor w/ 2 levels "No","Yes": 1 2 2 1 1 1 1 1 1 1 ...
- $ GenHlth             : Factor w/ 5 levels "Excellent","Very good",..: 5 3 5 2 2 2 3 3 5 2 ...
+ $ GenHlth             : Factor w/ 5 levels "Excellent","Very_good",..: 5 3 5 2 2 2 3 3 5 2 ...
  $ MentHlth            : num [1:229474] 18 0 30 0 3 0 0 0 30 0 ...
  $ PhysHlth            : num [1:229474] 15 0 30 0 0 2 14 0 30 0 ...
  $ DiffWalk            : Factor w/ 2 levels "No","Yes": 2 1 2 1 1 1 1 2 2 1 ...
@@ -445,11 +444,6 @@ dbl (22): Diabetes_binary, HighBP, HighChol, CholCheck, BMI, Smoker, Stroke,...
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 68842    22</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>pre_proc_values <span class="ot">&lt;-</span> <span class="fu">preProcess</span>(train_data, <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>))</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Scaling and centralizing train and test data sets.</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>train_transformed <span class="ot">&lt;-</span> <span class="fu">predict</span>(pre_proc_values, train_data)</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>test_transformed <span class="ot">&lt;-</span> <span class="fu">predict</span>(pre_proc_values, test_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="logistic-regression-models" class="level2">
@@ -458,72 +452,72 @@ dbl (22): Diabetes_binary, HighBP, HighChol, CholCheck, BMI, Smoker, Stroke,...
 <section id="logistic-regression-model-1" class="level3">
 <h3 class="anchored" data-anchor-id="logistic-regression-model-1">Logistic regression Model 1</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>trctrl <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, <span class="at">number =</span> <span class="dv">5</span>)</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>logistic_M1_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(Diabetes_binary <span class="sc">~</span> ., </span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_transformed, </span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>trctrl <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, <span class="at">number =</span> <span class="dv">5</span>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>logistic_M1_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(Diabetes_binary <span class="sc">~</span> ., </span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_data, </span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="logistic-regression-model-2" class="level3">
 <h3 class="anchored" data-anchor-id="logistic-regression-model-2">Logistic regression Model 2</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>logistic_M2_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(Diabetes_binary <span class="sc">~</span> . <span class="sc">-</span> NoDocbcCost <span class="sc">-</span> Fruits <span class="sc">-</span> AnyHealthcare <span class="sc">+</span> PhysHlth<span class="sc">:</span>GenHlth <span class="sc">+</span> PhysHlth<span class="sc">:</span>DiffWalk <span class="sc">+</span> GenHlth<span class="sc">:</span>DiffWalk <span class="sc">+</span> Income<span class="sc">:</span>Education <span class="sc">+</span> Income<span class="sc">:</span>GenHlth <span class="sc">+</span> Income<span class="sc">:</span>DiffWalk,</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_transformed, </span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>logistic_M2_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(Diabetes_binary <span class="sc">~</span> . <span class="sc">-</span> NoDocbcCost <span class="sc">-</span> Fruits <span class="sc">-</span> AnyHealthcare <span class="sc">+</span> PhysHlth<span class="sc">:</span>GenHlth <span class="sc">+</span> PhysHlth<span class="sc">:</span>DiffWalk <span class="sc">+</span> GenHlth<span class="sc">:</span>DiffWalk <span class="sc">+</span> Income<span class="sc">:</span>Education <span class="sc">+</span> Income<span class="sc">:</span>GenHlth <span class="sc">+</span> Income<span class="sc">:</span>DiffWalk,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_data, </span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="logistic-regression-model-3" class="level3">
 <h3 class="anchored" data-anchor-id="logistic-regression-model-3">Logistic regression Model 3</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>logistic_M3_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(Diabetes_binary <span class="sc">~</span> GenHlth <span class="sc">+</span> HighBP <span class="sc">+</span> DiffWalk <span class="sc">+</span> BMI <span class="sc">+</span> HighChol <span class="sc">+</span> Age <span class="sc">+</span> HeartDiseaseorAttack <span class="sc">+</span> PhysHlth <span class="sc">+</span> Income <span class="sc">+</span> PhysActivity, </span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_transformed, </span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>logistic_M3_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(Diabetes_binary <span class="sc">~</span> GenHlth <span class="sc">+</span> HighBP <span class="sc">+</span> DiffWalk <span class="sc">+</span> BMI <span class="sc">+</span> HighChol <span class="sc">+</span> Age <span class="sc">+</span> HeartDiseaseorAttack <span class="sc">+</span> PhysHlth <span class="sc">+</span> Income <span class="sc">+</span> PhysActivity, </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_data, </span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="models-comparison" class="level3">
 <h3 class="anchored" data-anchor-id="models-comparison">Models comparison</h3>
 <p>Obtain log-loss value for each model:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#use logLoss as our metric for logistic M1 model:</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co">#get predicted values corresponding to the probabilities that each observation in test data belongs to "Prediabetes_or_diabetes"</span></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>predicted_prob_M1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M1_fit,</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="co">#convert variable Diabetes_binary from factor to numeric in order to use logLoss function</span></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M1 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_transformed<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes_or_diabetes"</span>),</span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>                                predicted_prob_M1<span class="sc">$</span>Prediabetes_or_diabetes)</span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="co">#use logLoss  as our metric for logistic M2 model:</span></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>predicted_prob_M2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M2_fit,</span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M2 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_transformed<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes_or_diabetes"</span>),</span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>                                predicted_prob_M2<span class="sc">$</span>Prediabetes_or_diabetes)</span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="co">#use logLoss as our metric for logistic M3 model:</span></span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>predicted_prob_M3 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M3_fit,</span>
-<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
-<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M3 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_transformed<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes_or_diabetes"</span>),</span>
-<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>                                predicted_prob_M3<span class="sc">$</span>Prediabetes_or_diabetes)</span>
-<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a><span class="co">#list of log-loss values obtained from each logistic model</span></span>
-<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">log_loss_logistic_M1 =</span> log_loss_logistic_M1, <span class="at">log_loss_logistic_M2 =</span> log_loss_logistic_M2, <span class="at">log_loss_logistic_M3 =</span> log_loss_logistic_M3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">#use logLoss as our metric for logistic M1 model:</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co">#get predicted values corresponding to the probabilities that each observation in test data belongs to "Prediabetes_or_diabetes"</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>predicted_prob_M1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M1_fit,</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_data, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co">#convert variable Diabetes_binary from factor to numeric in order to use logLoss function</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M1 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_data<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes_or_diabetes"</span>),</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>                                predicted_prob_M1<span class="sc">$</span>Prediabetes_or_diabetes)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="co">#use logLoss  as our metric for logistic M2 model:</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>predicted_prob_M2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M2_fit,</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_data, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M2 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_data<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes_or_diabetes"</span>),</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>                                predicted_prob_M2<span class="sc">$</span>Prediabetes_or_diabetes)</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a><span class="co">#use logLoss as our metric for logistic M3 model:</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>predicted_prob_M3 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M3_fit,</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_data, <span class="sc">-</span>Diabetes_binary), <span class="at">type=</span><span class="st">'prob'</span>)</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>log_loss_logistic_M3 <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_data<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes_or_diabetes"</span>),</span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>                                predicted_prob_M3<span class="sc">$</span>Prediabetes_or_diabetes)</span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a><span class="co">#list of log-loss values obtained from each logistic model</span></span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">log_loss_logistic_M1 =</span> log_loss_logistic_M1, <span class="at">log_loss_logistic_M2 =</span> log_loss_logistic_M2, <span class="at">log_loss_logistic_M3 =</span> log_loss_logistic_M3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$log_loss_logistic_M1
 [1] 0.3466268
@@ -543,18 +537,18 @@ $log_loss_logistic_M3
 <p>We do not need to use preprocessed data for tree modeling. Therefore, I use train data without preprocessing here.</p>
 <p>Now, we can fit a classification tree with a grid of values for the complexity parameter (cp). cp is a tuning parameter used in CART (Classification and Regression Trees) to control the complexity of the decision tree model. It represents the cost of adding another predictor split to the tree. A larger cp value results in a simpler tree (fewer splits), while a smaller cp value allows the tree to be more complex (more splits).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>classification_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(Diabetes_binary <span class="sc">~</span> .,</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">data =</span> train_data,</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">method =</span> <span class="st">"rpart"</span>,</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">metric =</span> <span class="st">"logLoss"</span>,</span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">trControl =</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, </span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">number =</span> <span class="dv">5</span>,</span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">classProbs =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">summaryFunction =</span> mnLogLoss),</span>
-<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tuneGrid =</span> <span class="fu">expand.grid</span>(<span class="at">cp =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.1</span>, <span class="at">by =</span> <span class="fl">0.001</span>)))</span>
-<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>classification_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>classification_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(Diabetes_binary <span class="sc">~</span> .,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">data =</span> train_data,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">method =</span> <span class="st">"rpart"</span>,</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">metric =</span> <span class="st">"logLoss"</span>,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">trControl =</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, </span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">number =</span> <span class="dv">5</span>,</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">classProbs =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">summaryFunction =</span> mnLogLoss),</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tuneGrid =</span> <span class="fu">expand.grid</span>(<span class="at">cp =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.1</span>, <span class="at">by =</span> <span class="fl">0.001</span>)))</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>classification_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CART 
 
@@ -679,21 +673,21 @@ The final value used for the model was cp = 0.001.</code></pre>
 <section id="random-forest" class="level2">
 <h2 class="anchored" data-anchor-id="random-forest">Random Forest</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(Diabetes_binary <span class="sc">~</span> .,</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> train_data,</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">method =</span> <span class="st">"ranger"</span>,</span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">metric =</span> <span class="st">"logLoss"</span>,</span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">num.trees =</span> <span class="dv">100</span>,</span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">trControl =</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, </span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">number =</span> <span class="dv">3</span>,</span>
-<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">classProbs =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">summaryFunction =</span> mnLogLoss),</span>
-<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>                <span class="at">tuneGrid =</span> <span class="fu">expand.grid</span>(<span class="at">mtry =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">sqrt</span>(<span class="fu">ncol</span>(train_data)<span class="sc">-</span><span class="dv">1</span>),</span>
-<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">splitrule =</span> <span class="st">"extratrees"</span>,</span>
-<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">min.node.size =</span> <span class="dv">100</span>))</span>
-<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>rf_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(Diabetes_binary <span class="sc">~</span> .,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> train_data,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">method =</span> <span class="st">"ranger"</span>,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">metric =</span> <span class="st">"logLoss"</span>,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">num.trees =</span> <span class="dv">100</span>,</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">trControl =</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, </span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">number =</span> <span class="dv">3</span>,</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">classProbs =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">summaryFunction =</span> mnLogLoss),</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>                <span class="at">tuneGrid =</span> <span class="fu">expand.grid</span>(<span class="at">mtry =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">sqrt</span>(<span class="fu">ncol</span>(train_data)<span class="sc">-</span><span class="dv">1</span>),</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">splitrule =</span> <span class="st">"extratrees"</span>,</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">min.node.size =</span> <span class="dv">100</span>))</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>rf_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Random Forest 
 
@@ -725,27 +719,27 @@ The final values used for the model were mtry = 4, splitrule = extratrees
 <section id="final-model-selection" class="level2">
 <h2 class="anchored" data-anchor-id="final-model-selection">Final Model Selection</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co">#use logLoss as our metric for classification model:</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="co">#get predicted values corresponding to the probabilities that each observation in test data belongs to "Prediabetes_or_diabetes"</span></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>predicted_prob_classification <span class="ot">&lt;-</span> <span class="fu">predict</span>(classification_fit,</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">newdata =</span> <span class="fu">select</span>(test_data, <span class="sc">-</span>Diabetes_binary),</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">type=</span><span class="st">'prob'</span>)</span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="co">#convert variable Diabetes_binary from factor to numeric in order to use logLoss function</span></span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>log_loss_classification <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_data<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes_or_diabetes"</span>),</span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>                                   predicted_prob_classification<span class="sc">$</span>Prediabetes_or_diabetes)</span>
-<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="co">#use logLoss as our metric for classification model:</span></span>
-<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>predicted_prob_rf <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_fit,</span>
-<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_data, <span class="sc">-</span>Diabetes_binary),</span>
-<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>                             <span class="at">type=</span><span class="st">'prob'</span>)</span>
-<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="co">#convert variable Diabetes_binary from factor to numeric in order to use logLoss function</span></span>
-<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>log_loss_rf <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_data<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes_or_diabetes"</span>),</span>
-<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>                                   predicted_prob_rf<span class="sc">$</span>Prediabetes_or_diabetes)</span>
-<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a><span class="co">#list of log-loss values obtained from each model</span></span>
-<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">log_loss_logistic_M3 =</span> log_loss_logistic_M3,</span>
-<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>     <span class="at">log_loss_classification =</span> log_loss_classification,</span>
-<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>     <span class="at">log_loss_rf =</span> log_loss_rf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co">#use logLoss as our metric for classification model:</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="co">#get predicted values corresponding to the probabilities that each observation in test data belongs to "Prediabetes_or_diabetes"</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>predicted_prob_classification <span class="ot">&lt;-</span> <span class="fu">predict</span>(classification_fit,</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">newdata =</span> <span class="fu">select</span>(test_data, <span class="sc">-</span>Diabetes_binary),</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">type=</span><span class="st">'prob'</span>)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="co">#convert variable Diabetes_binary from factor to numeric in order to use logLoss function</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>log_loss_classification <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_data<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes_or_diabetes"</span>),</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>                                   predicted_prob_classification<span class="sc">$</span>Prediabetes_or_diabetes)</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="co">#use logLoss as our metric for classification model:</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>predicted_prob_rf <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_fit,</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>                             <span class="at">newdata =</span> <span class="fu">select</span>(test_data, <span class="sc">-</span>Diabetes_binary),</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>                             <span class="at">type=</span><span class="st">'prob'</span>)</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a><span class="co">#convert variable Diabetes_binary from factor to numeric in order to use logLoss function</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>log_loss_rf <span class="ot">&lt;-</span> <span class="fu">logLoss</span>(<span class="fu">as.numeric</span>(<span class="fu">as.character</span>(test_data<span class="sc">$</span>Diabetes_binary) <span class="sc">==</span> <span class="st">"Prediabetes_or_diabetes"</span>),</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>                       predicted_prob_rf<span class="sc">$</span>Prediabetes_or_diabetes)</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a><span class="co">#list of log-loss values obtained from each model</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">log_loss_logistic_M3 =</span> log_loss_logistic_M3,</span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>     <span class="at">log_loss_classification =</span> log_loss_classification,</span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>     <span class="at">log_loss_rf =</span> log_loss_rf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$log_loss_logistic_M3
 [1] 0.3497698

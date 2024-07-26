@@ -1,28 +1,17 @@
 #load packages needed
 library(tidyverse)
-library(ggplot2)
 library(caret)
-library(Metrics)
-library(rpart)
-library(ranger)
 library(plumber)
 
 set.seed(11)
 
 #read in csv data
 data_original <- read_csv('diabetes_binary_health_indicators_BRFSS2015.csv')
-str(data_original)
-
 deplicates <- data_original[duplicated(data_original), ]
-nrow(deplicates)
-
 #then we need to exclude data that are duplicated
-#dataset data is updated here
 data_no_duplicates <- data_original[!duplicated(data_original), ]
-nrow(data_no_duplicates)
 
-Now we want to convert numeric variables to factors according to previous sorted unique values for each variable.
-
+#Now we want to convert numeric variables to factors according to previous sorted unique values for each variable.
 data <- data_no_duplicates
 
 data$Diabetes_binary <- factor(
@@ -106,7 +95,7 @@ data$NoDocbcCost <- factor(
 data$GenHlth <- factor(
   data$GenHlth,
   levels = c(1, 2, 3, 4, 5), 
-  labels = c("Excellent", "Very good", "Good", "Fair", "Poor")
+  labels = c("Excellent", "Very_good", "Good", "Fair", "Poor")
 )
 
 data$DiffWalk <- factor(
@@ -139,13 +128,7 @@ data$Income <- factor(
   labels = c("Less_than_10K", "10K_to_less_than_15K", "15K_to_Less_than_20K", "20K_to_less_than_25K", "25K_to_less_than_35K", "35K_to_less_than_50k", "50k_to_less_than_75k", "75k_or_more")
 )
 
-str(data)
-
-
-## Split Data
-
 #Split this data into a training and test set. Before modeling, let’s scale and centralized data.
-
 trainIndex <- createDataPartition(data$Diabetes_binary, p = .7,
                                   list = FALSE,
                                   times = 1)
@@ -153,35 +136,120 @@ trainIndex <- createDataPartition(data$Diabetes_binary, p = .7,
 train_data <-  data[trainIndex, ]
 test_data <- data[-trainIndex, ]
 
-#check the dimensions of our training data and testing data frame
-dim(train_data)
-dim(test_data)
-
-pre_proc_values <- preProcess(train_data, method = c("center", "scale"))
-
-#Scaling and centralizing train and test data sets.
-train_transformed <- predict(pre_proc_values, train_data)
-test_transformed <- predict(pre_proc_values, test_data)
-
-### Logistic regression Model 3
+#Our best model: Logistic regression Model 3
 
 logistic_M3_fit <- train(Diabetes_binary ~ GenHlth + HighBP + DiffWalk + BMI + HighChol + Age + HeartDiseaseorAttack + PhysHlth + Income + PhysActivity, 
-                         data = train_transformed, 
+                         data = train_data, 
                          method = "glm",
                          family="binomial",
                          trControl=trctrl)
 
+# Calculate default values
+default_values <- data.frame(
+  GenHlth = names(sort(table(data$GenHlth), decreasing = TRUE))[1],
+  HighBP = names(sort(table(data$HighBP), decreasing = TRUE))[1],
+  DiffWalk = names(sort(table(data$DiffWalk), decreasing = TRUE))[1],
+  BMI = mean(data$BMI, na.rm = TRUE),
+  HighChol = names(sort(table(data$HighChol), decreasing = TRUE))[1],
+  Age = names(sort(table(data$Age), decreasing = TRUE))[1],
+  HeartDiseaseorAttack = names(sort(table(data$HeartDiseaseorAttack), decreasing = TRUE))[1],
+  PhysHlth = round(mean(data$PhysHlth, na.rm = TRUE),0),
+  Income = names(sort(table(data$Income), decreasing = TRUE))[1],
+  PhysActivity = names(sort(table(data$PhysActivity), decreasing = TRUE))[1]
+)
+default_values
 
-rf_fit_4 <- train(Diabetes_binary ~ .,
-                data = train_transformed_2,
-                method = "ranger",
-                metric = "logLoss",
-                num.trees = 100,
-                trControl = trainControl(method = "cv", 
-                                         number = 3,
-                                         classProbs = TRUE,
-                                         summaryFunction = mnLogLoss),
-                tuneGrid = expand.grid(mtry = 4,
-                                       splitrule = "extratrees",
-                                       min.node.size = 100))
+#Define API
+#create a pred endpoint
 
+#* Predict diabetes
+#* @param GenHlth Factor. General health rating ("Excellent", "Very good", "Good", "Fair", "Poor").
+#* @param HighBP Factor. High blood pressure indicator ("No_high_BP" or "High_BP").
+#* @param DiffWalk Factor. Difficulty walking or climbing stairs ("No" or "Yes").
+#* @param BMI Numeric. Body Mass Index.
+#* @param HighChol Factor. High cholesterol indicator ("No_high_cholesterol" or "High_cholesterol").
+#* @param Age Factor. Age group ("18-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "70-74", "75-79", "80_or_older").
+#* @param HeartDiseaseorAttack Factor. Heart disease or attack indicator ("No" or "Yes").
+#* @param PhysHlth Numeric. Days of poor physical health in the past 30 days.
+#* @param Income Factor. Income level ("Less_than_10K", "10K_to_less_than_15K", "15K_to_Less_than_20K", "20K_to_less_than_25K", "25K_to_less_than_35K", "35K_to_less_than_50k", "50k_to_less_than_75k", "75k_or_more").
+#* @param PhysActivity Factor. Physical activity indicator ("No" or "Yes").
+#* @get /pred
+
+fun_API <- function(GenHlth = default_values$GenHlth,
+                    HighBP = default_values$HighBP,
+                    DiffWalk = default_values$DiffWalk,
+                    BMI = default_values$BMI,
+                    HighChol = default_values$HighChol,
+                    Age = default_values$Age,
+                    HeartDiseaseorAttack = default_values$HeartDiseaseorAttack,
+                    PhysHlth = default_values$PhysHlth,
+                    Income = default_values$Income,
+                    PhysActivity = default_values$PhysActivity) {
+  # Create a new data frame with the input values
+  new_data <- data.frame(
+    GenHlth = factor(GenHlth, levels = levels(data$GenHlth)),
+    HighBP = factor(HighBP, levels = levels(data$HighBP)),
+    DiffWalk = factor(DiffWalk, levels = levels(data$DiffWalk)),
+    BMI = as.numeric(BMI),
+    HighChol = factor(HighChol, levels = levels(data$HighChol)),
+    Age = factor(Age, levels = levels(data$Age)),
+    HeartDiseaseorAttack = factor(HeartDiseaseorAttack, levels = levels(data$HeartDiseaseorAttack)),
+    PhysHlth = as.numeric(PhysHlth),
+    Income = factor(Income, levels = levels(data$Income)),
+    PhysActivity = factor(PhysActivity, levels = levels(data$PhysActivity))
+  )
+  
+  # Predict the class probabilities
+  predictions <- predict(logistic_M3_fit, new_data, type = "prob")
+  
+  return(predictions)
+}
+
+fun_API(GenHlth = "Poor",
+        HighBP = "High_BP",
+        DiffWalk = "Yes",
+        BMI = 100,
+        HighChol = "High_cholesterol",
+        Age = "80_or_older",
+        HeartDiseaseorAttack = "Yes",
+        PhysHlth = 30,
+        Income = "Less_than_10K",
+        PhysActivity = "No") 
+
+
+fun_API(GenHlth = "Excellent",
+        HighBP = "No_high_BP",
+        DiffWalk = "No",
+        BMI = 20,
+        HighChol = "No_high_cholesterol",
+        Age = "18-24",
+        HeartDiseaseorAttack = "No",
+        PhysHlth = 0,
+        Income = "75k_or_more",
+        PhysActivity = "Yes") 
+
+
+fun_API(GenHlth = "Fair",
+        HighBP = "High_BP",
+        DiffWalk = "Yes",
+        BMI = 30,
+        HighChol = "High_cholesterol",
+        Age = "65-69",
+        HeartDiseaseorAttack = "Yes",
+        PhysHlth = 7,
+        Income = "50k_to_less_than_75k",
+        PhysActivity = "No")
+
+#http://localhost:PORT/pred
+
+
+#* Information about the API
+#* @get /info
+function() {
+  list(
+    name = "Jia Lu",
+    github_pages_url = ""
+  )
+}
+
+#http://localhost:PORT/info
