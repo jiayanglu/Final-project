@@ -128,19 +128,11 @@ data$Income <- factor(
   labels = c("Less_than_10K", "10K_to_less_than_15K", "15K_to_Less_than_20K", "20K_to_less_than_25K", "25K_to_less_than_35K", "35K_to_less_than_50k", "50k_to_less_than_75k", "75k_or_more")
 )
 
-#Split this data into a training and test set. Before modeling, let’s scale and centralized data.
-trainIndex <- createDataPartition(data$Diabetes_binary, p = .7,
-                                  list = FALSE,
-                                  times = 1)
-
-train_data <-  data[trainIndex, ]
-test_data <- data[-trainIndex, ]
-
 #Our best model: Logistic regression Model 3
 trctrl <- trainControl(method = "cv", number = 5)
 
 logistic_M3_fit <- train(Diabetes_binary ~ GenHlth + HighBP + DiffWalk + BMI + HighChol + Age + HeartDiseaseorAttack + PhysHlth + Income + PhysActivity, 
-                         data = train_data, 
+                         data = data, 
                          method = "glm",
                          family="binomial",
                          trControl=trctrl)
@@ -208,6 +200,7 @@ fun_API <- function(GenHlth = default_values$GenHlth,
 
 #http://localhost:8000/pred
 
+#Example 1
 fun_API(GenHlth = "Poor",
         HighBP = "High_BP",
         DiffWalk = "Yes",
@@ -221,6 +214,7 @@ fun_API(GenHlth = "Poor",
 
 #http://localhost:8000/pred?GenHlth=Poor&HighBP=High_BP&DiffWalk=Yes&BMI=100&HighChol=High_cholesterol&Age=80_or_older&HeartDiseaseorAttack=Yes&PhysHlth=30&Income=Less_than_10K&PhysActivity=No
 
+#Example 2
 fun_API(GenHlth = "Excellent",
         HighBP = "No_high_BP",
         DiffWalk = "No",
@@ -234,6 +228,7 @@ fun_API(GenHlth = "Excellent",
 
 #http://localhost:8000/pred?GenHlth=Excellent&HighBP=No_high_BP&DiffWalk=No&BMI=20&HighChol=No_high_cholesterol&Age=18-24&HeartDiseaseorAttack=No&PhysHlth=0&Income=75k_or_more&PhysActivity=Yes
 
+#Example 3
 fun_API(GenHlth = "Fair",
         HighBP = "High_BP",
         DiffWalk = "Yes",
